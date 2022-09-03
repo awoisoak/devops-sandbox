@@ -5,8 +5,6 @@ from flask import Flask, render_template, send_from_directory
 
 app = Flask(__name__)
 
-repo.connect_db()
-
 @app.route("/")
 def index():
     return get_gallery()
@@ -18,8 +16,7 @@ def send_image(filename):
 
 @app.route('/gallery')
 def get_gallery():
-    image_names = repo.getLocalImages()
-    utils.filterImages(image_names)
+    image_names = repo.getImages()
     return render_template("gallery.html", image_names=image_names)
 
 

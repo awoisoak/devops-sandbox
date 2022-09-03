@@ -1,13 +1,18 @@
 from colorama import Fore, Style
 
-# Print the passed message in red
-def printError(msg):
-    print(Fore.RED + msg)
-    print(Style.RESET_ALL)
-
 # Print the passed message in green
 def printSuccess(msg):
     print(Fore.GREEN + msg)
+    print(Style.RESET_ALL)
+
+# Print the passed message in yellow
+def printWarning(msg):
+    print(Fore.YELLOW + msg)
+    print(Style.RESET_ALL)
+
+# Print the passed message in red
+def printError(msg):
+    print(Fore.RED + msg)
     print(Style.RESET_ALL)
 
 # Filter unwanted files names
