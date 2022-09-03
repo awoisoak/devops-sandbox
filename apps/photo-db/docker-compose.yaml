@@ -1,0 +1,22 @@
+# we need the ip of the other container in order to be able to connect
+# https://mariadb.com/kb/en/installing-and-using-mariadb-via-docker/#connecting-to-mariadb-from-outside-the-container
+# mysql -h 0.0.0.0 -P 3306 --protocol=tcp -u root -ppassword
+
+
+version: "3.9"
+services:
+  db:
+    image: mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD: password
+      MARIADB_DATABASE: photosdb
+      MARIADB_USER: user
+      MARIADB_PASSWORD: password
+    volumes:
+      # persist data files into `datadir` volume managed by docker
+      - datadir:/var/lib/mysql
+      # bind-mount any sql files that should be run while initializing
+      - ./setup-db.sql:/docker-entrypoint-initdb.d/setup-db.sql
+
+volumes:
+  datadir:
