@@ -1,5 +1,7 @@
-# The container can be run directly from docker hub
-# ex) docker run -p 9000:9000 -ti awoisoak/photo-shop
+# To build the container:
+#   docker build . -t awoisoak/photo-shop
+# To run it directly from docker hub:
+#   docker run -p 9000:9000 --network photo-network -ti awoisoak/photo-shop
 
 # Force platform to avoid issues with Apple silicon processors
 FROM --platform=linux/amd64 ubuntu
@@ -9,6 +11,8 @@ RUN apt update
 RUN apt install python3 -y
 RUN apt install python3-pip -y
 RUN apt install curl -y
+RUN apt install mysql-client -y
+RUN apt install libmysqlclient-dev -y
 
 # Copy source code to working directory
 COPY . /opt/photo_shop
