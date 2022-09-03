@@ -1,11 +1,11 @@
-import os, db
+import modules.repo as repo, modules.utils as utils
 from tokenize import Name
 
 from flask import Flask, render_template, send_from_directory
 
 app = Flask(__name__)
 
-db.connect_db()
+repo.connect_db()
 
 @app.route("/")
 def index():
@@ -18,11 +18,8 @@ def send_image(filename):
 
 @app.route('/gallery')
 def get_gallery():
-    image_names = os.listdir('./images')
-    filter='.DS_Store'
-    if (filter in image_names):
-        image_names.remove(filter)
-    print(image_names)
+    image_names = repo.getLocalImages()
+    utils.filterImages(image_names)
     return render_template("gallery.html", image_names=image_names)
 
 

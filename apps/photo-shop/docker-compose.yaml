@@ -11,7 +11,7 @@ services:
       # persist data files into `datadir` volume managed by docker
       - datadir:/var/lib/mysql
       # bind-mount any sql files that should be run while initializing
-      - ./setup-db.sql:/docker-entrypoint-initdb.d/setup-db.sql
+      - ./scripts/setup-db.sql:/docker-entrypoint-initdb.d/setup-db.sql
   web:  
     build: .
     #image: awoisoak/photo-shop

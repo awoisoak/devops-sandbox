@@ -1,6 +1,7 @@
-import mysql.connector, utils
+import os, mysql.connector, modules.utils as utils
 from mysql.connector import errorcode
 
+# Conects to the database (running in another container) and grab the data
 def connect_db():
     try:
         # Database information (including hostname and name) is defined in docker-compose file
@@ -13,7 +14,7 @@ def connect_db():
         cursor.execute(query)
 
         for (id, Name, Price, ImageUrl) in cursor:
-            print("awoo:",Name, Price, ImageUrl)
+            print("awo:",Name, Price, ImageUrl)
 
         cursor.close()
     except mysql.connector.Error as err:
@@ -21,3 +22,7 @@ def connect_db():
     else:
         utils.printSuccess("Connection success! :)")
         cnx.close()
+
+# Get the list of images directly from the local directory
+def getLocalImages():
+    image_names = os.listdir('./images')        
