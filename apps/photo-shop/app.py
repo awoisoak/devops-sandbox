@@ -1,11 +1,11 @@
-import os
+import os, db
+from tokenize import Name
 
 from flask import Flask, render_template, send_from_directory
 
 app = Flask(__name__)
 
-APP_ROOT = os.path.dirname(os.path.abspath(__file__))
-
+db.connect_db()
 
 @app.route("/")
 def index():

@@ -12,6 +12,7 @@ Deprecated==1.2.13
 deprecation==2.1.0
 filelock==3.3.2
 Flask==2.2.2
+Flask-MySQLdb==1.0.1
 idna==3.3
 importlib-metadata==4.12.0
 insomniac==3.7.8
@@ -20,10 +21,15 @@ Jinja2==3.1.2
 logzero==1.7.0
 lxml==4.6.4
 MarkupSafe==2.1.1
+mysql==0.0.3
+mysql-connector==2.2.9
+mysql-connector-python==8.0.30
+mysqlclient==2.1.1
 packaging==20.9
 peewee==3.14.8
 Pillow==8.4.0
 progress==1.6
+protobuf==3.20.1
 py==1.11.0
 pyelftools==0.27
 pyparsing==3.0.5
