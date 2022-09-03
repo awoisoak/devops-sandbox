@@ -3,8 +3,9 @@ from mysql.connector import errorcode
 
 def connect_db():
     try:
+        # Database information (including hostname and name) is defined in docker-compose file
         cnx = mysql.connector.connect(user='root', password='password',
-                                    host='0.0.0.0',
+                                    host='db',
                                     database='photosdb')
 
         cursor = cnx.cursor()
@@ -18,5 +19,5 @@ def connect_db():
     except mysql.connector.Error as err:
         utils.printError("Error connecting to the db :(")
     else:
-        print("awoooo connection success! :)")
+        utils.printSuccess("Connection success! :)")
         cnx.close()
