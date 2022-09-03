@@ -26,6 +26,6 @@ RUN pip install -r requirements.txt
 # Flask will expose port 9000 for the website
 EXPOSE 9000
 
-# Run Flask webserver
-ENTRYPOINT [ "python3" ]
+# Run Flask webserver. -u flag to force unbuffered output
+ENTRYPOINT [ "python3", "-u" ]
 CMD ["app.py" ]
