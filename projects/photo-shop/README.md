@@ -4,4 +4,4 @@ The web server will display the images registered in the database and will expos
 
     docker compose up
 
-![alt](https://github.com/awoisoak/devops-sandbox/blob/master/apps/photo-shop/architecture.jpg)
+![alt](https://raw.githubusercontent.com/awoisoak/devops-sandbox/master/projects/photo-shop/architecture.jpg)
