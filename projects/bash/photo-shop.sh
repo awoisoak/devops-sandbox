@@ -64,19 +64,13 @@ function check_item(){
   fi
 }
 
-
-
 success "############## Setup Database Server... ##############"
-# TODO set a warning this script will not work with a ubuntu docker image since it does not support systemctl
 # Update list of available packages
 sudo apt update
 
 # Install and configure Maria-DB
 success "Installing MariaDB Server.."
 sudo apt install mariadb-server -y
-
-#sudo mysql_secure_installation #needed? https://www.digitalocean.com/community/tutorials/how-to-install-mariadb-on-ubuntu-20-04
-
 
 success "Starting MariaDB Server.."
 sudo service mariadb start
@@ -131,8 +125,7 @@ sudo apt install mysql-client-8.0 libmysqlclient-dev -y
 success "Installing curl .."
 sudo apt install curl -y
 
-# Start Python Flask web service
-# TODO Run flask as a service with systemd https://blog.miguelgrinberg.com/post/running-a-flask-application-as-a-service-with-systemd
+# Start Python Flask web server
 
 #Install git
 success "Installing git.."
@@ -141,8 +134,12 @@ sudo apt install git -y
 # Download code
 success "Downloading source code and setting it up..."
 sudo git clone https://github.com/awoisoak/photo-shop.git /var/www/html/
+
 # Set localhost as the database host 
 sudo sed -i 's/INSERT_DB_ADDRESS/localhost/g' /var/www/html/modules/repo.py
+
+# Move to working directoy
+cd /var/www/html
 
 # Install Python dependencies 
 pip install -r /var/www/html/requirements.txt
