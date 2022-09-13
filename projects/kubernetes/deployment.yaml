@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: photo-shop
+  labels:
+    app: photo-shop-app
+    type: frontend
+spec:
+  template:
+    metadata:
+      name: photo-shop-pod
+      labels:
+        location: Jerte
+    spec:
+      containers:
+        - name: photo-shop
+          image: awoisoak/photo-shop
+  replicas: 6
+  selector:
+    matchLabels:
+      location: Jerte        
