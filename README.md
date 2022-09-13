@@ -1,4 +1,4 @@
-Repository to play with different devops scenarios found under [projects]([https://](https://github.com/awoisoak/devops-sandbox/tree/master/projects)).
+Repository to play with different devops scenarios found under [projects](https://github.com/awoisoak/devops-sandbox/tree/master/projects).
 
 # Projects
 
