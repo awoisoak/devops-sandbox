@@ -4,4 +4,3 @@
 #Ignore these temporarily
 scripts/
 docker/
-kubernetes/
