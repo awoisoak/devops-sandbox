@@ -13,8 +13,8 @@ services:
       # bind-mount any sql files that should be run while initializing
       - ./scripts/setup-db.sql:/docker-entrypoint-initdb.d/setup-db.sql
   web:  
-    build: .
-    #image: awoisoak/photo-shop
+    #build: .
+    image: awoisoak/photo-shop
     ports:
       - "9000:9000"
 
