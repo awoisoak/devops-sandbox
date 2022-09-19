@@ -15,6 +15,9 @@ services:
   web:  
     #build: .
     image: awoisoak/photo-shop
+    #Set environment variable to the image
+    environment:
+      - DATABASE_URL=db
     ports:
       - "9000:9000"
 
