@@ -1,2 +1,4 @@
 app/* linguist-documentation=false
 app/* linguist-vendored
+*.yaml linguist-detectable=true
+*.yaml linguist-language=YAML
