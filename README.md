@@ -31,7 +31,11 @@ The web server will display the images registered in the database and will expos
 
 
 
-This project runs a Kubernetes cluster with a [photo-shop](https://github.com/awoisoak/photo-shop) server deployment and a mariadb database one
+
+This project runs a Kubernetes cluster with two deployments: one for a [photo-shop](https://github.com/awoisoak/photo-shop) web server and another one for a mariadb database.
+
+
+![kubernetes diagram](https://github.com/awoisoak/devops-sandbox/blob/master/projects/kubernetes/diagram.png)
 
 
  ### db-deploy.yaml
@@ -70,6 +74,7 @@ However, if you are running K8s on minikube you will have to obtain the ip:port 
 ➜  kubernetes git:(master) ✗ minikube service photo-shop-service --url
 http://127.0.0.1:51781
 ```
+
 
 
 
