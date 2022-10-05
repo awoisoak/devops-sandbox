@@ -4,4 +4,6 @@ The web server will display the images registered in the database and will expos
 
     docker compose up
 
-![alt](https://raw.githubusercontent.com/awoisoak/devops-sandbox/master/projects/docker-compose/architecture.jpg)
+<p align="center">
+<img src="https://raw.githubusercontent.com/awoisoak/devops-sandbox/master/projects/docker-compose/architecture.jpg" width="500" />
+</p>
