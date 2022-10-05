@@ -35,8 +35,9 @@ The web server will display the images registered in the database and will expos
 This project runs a Kubernetes cluster with two deployments: one for a [photo-shop](https://github.com/awoisoak/photo-shop) web server and another one for a mariadb database.
 
 
-![kubernetes diagram](https://github.com/awoisoak/devops-sandbox/blob/master/projects/kubernetes/diagram.png)
-
+<p align="center">
+<img src="https://github.com/awoisoak/devops-sandbox/blob/master/projects/kubernetes/diagram.png" width="500" />
+</p>
 
  ### db-deploy.yaml
 Database deployment consist of just one replica set.
