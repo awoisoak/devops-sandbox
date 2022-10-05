@@ -1,5 +1,8 @@
 
-This project runs a Kubernetes cluster with a [photo-shop](https://github.com/awoisoak/photo-shop) server deployment and a mariadb database one
+This project runs a Kubernetes cluster with two deployments: one for a [photo-shop](https://github.com/awoisoak/photo-shop) web server and another one for a mariadb database.
+
+
+![kubernetes diagram](https://github.com/awoisoak/devops-sandbox/blob/master/projects/kubernetes/diagram.png)
 
 
  ### db-deploy.yaml
