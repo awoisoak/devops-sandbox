@@ -1,21 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: photo-shop
+  name: web-deployment
   labels:
     app: photo-shop-app
     type: frontend
 spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      location: Jerte  
+      role: web
   template:
     metadata:
       name: photo-shop-pod
       labels:
         location: Jerte
+        role: web
     spec:
       containers:
         - name: photo-shop
           image: awoisoak/photo-shop
-  replicas: 6
-  selector:
-    matchLabels:
-      location: Jerte        
+          env:
+          # db hostname must be from the exposed server (not the pods!) 
+            - name: DATABASE_URL
+              value: db-service
+      

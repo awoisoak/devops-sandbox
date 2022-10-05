@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-deployment
+  labels:
+    app: photo-shop-app
+    type: db
+spec:  
+  replicas: 1
+  selector:
+    matchLabels:
+      location: Jerte 
+      role: db     
+  template:
+    metadata:
+      name: db-pod
+      labels:
+        location: Jerte
+        role: db
+    spec:
+      containers:
+        - name: mariadb
+          image: mariadb        
+          ports:
+            - containerPort: 9000
+          # According to mariadb docker image whatever is put in /docker-entrypoint-initdb.d folder
+          # will be executed. In order to setup the db we need to set a sql script in that folder by mounting a volume
+          volumeMounts:
+            - name: mariadb-initdb
+              mountPath: /docker-entrypoint-initdb.d
+          env:
+            - name: MARIADB_ROOT_PASSWORD
+              value: password
+            - name: MARIADB_DATABASE
+              value: photosdb
+            - name: MARIADB_USER
+              value: user
+            - name: MARIADB_PASSWORD 
+              value: password
+      volumes:
+        # The volume to mount in /docker-entrypoint-initdb.d    
+        # Data will be defined via db-configmap.yaml 
+        - name: mariadb-initdb
+          configMap:
+            name: mariadb-initdb-config    
