@@ -9,7 +9,7 @@ CI/CD pipeline created with Github Actions for the [Camera Exposure Calculator](
 
  ### google_play_deployment.yml.yaml
 
- This workflow allows the deployment of the app to [Google Play](https://play.google.com/store/apps/details?id=com.awoisoak.exposure) with a single interface.
+ This workflow allows the deployment of the app to [Google Play](https://play.google.com/store/apps/details?id=com.awoisoak.exposure) with a simple interface.
 
 <p align="center">
 <img width="317" alt="deploy" src="https://user-images.githubusercontent.com/11469990/195251751-bc819862-ed0f-47bd-bef5-bedb16465bd2.png">
