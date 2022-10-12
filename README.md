@@ -16,9 +16,6 @@ This script automatically build an environment with a Flask Python web server wh
 Pipeline created with Github Actions for the [Camera Exposure Calculator]([https://github.com/awoisoak/photo-shop](https://github.com/awoisoak/Camera-Exposure-Calculator)) app. 
  ### ci.yaml
  This workflow will build and upload the corresponding artifacts for [each commit](https://github.com/awoisoak/Camera-Exposure-Calculator/actions/runs/3228411301) pushed to the repository.
-<p align="center">
-<img width="909" alt="artifact" src="https://user-images.githubusercontent.com/11469990/195252296-b1e41e42-b7a7-47c1-8733-f3815db47dee.png">
-</p>
 
 
  ### google_play_deployment.yml.yaml
