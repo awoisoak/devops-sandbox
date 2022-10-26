@@ -1,3 +1,11 @@
 *.DS_Store
 *__pycache__*
+*.pem
 
+projects/terraform/.terraform.lock.hcl
+
+projects/terraform/.terraform/*
+
+projects/terraform/terraform.tfstate
+
+projects/terraform/terraform.tfstate.backup
