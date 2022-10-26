@@ -1,0 +1,5 @@
+This sample helps to understand how we can use modules locally to
+simplify conf files and be able to reuse them.
+
+We got an architecture made of a web server running in EC2, a dynamo database and a s3 bucket.
+We need to deployed the same architecture in several countries.
