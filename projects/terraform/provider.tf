@@ -10,18 +10,18 @@ terraform {
 provider "aws" {
   region = var.region
 
-  ##########################################################
-  # Extra configuration to emulate AWS services with localstack 
-  # https://docs.localstack.cloud/integrations/terraform/
-  #
-  s3_use_path_style           = true
-  skip_credentials_validation = true
-  skip_metadata_api_check     = true
-  skip_requesting_account_id  = true
+  # ##########################################################
+  # # Extra configuration to emulate AWS services with localstack 
+  # # https://docs.localstack.cloud/integrations/terraform/
+  # #
+  # s3_use_path_style           = true
+  # skip_credentials_validation = true
+  # skip_metadata_api_check     = true
+  # skip_requesting_account_id  = true
 
-  endpoints {
-    ec2 = "http://localhost:4566"
-  }
-  ##########################################################
+  # endpoints {
+  #   ec2 = "http://localhost:4566"
+  # }
+  # ##########################################################
 
 }
