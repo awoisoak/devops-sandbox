@@ -9,3 +9,5 @@ projects/terraform/.terraform/*
 projects/terraform/terraform.tfstate
 
 projects/terraform/terraform.tfstate.backup
+
+*.backup

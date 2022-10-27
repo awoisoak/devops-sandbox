@@ -1,9 +1,19 @@
 
+#TODO add security group to allow connecting to EC2
 resource "aws_instance" "web_server" {
-  ami           = "ami-0de5311b2a443fb89"
+  ami           = "ami-0de5311b2a443fb89" #Amazon Linux image based in CentOS
   instance_type = "t2.micro"
   key_name      = aws_key_pair.photoshop_key.key_name
-  #TODO user data to install and run photoshop docker image
+
+  user_data = <<-EOF
+        #! /bin/bash
+        sudo yum install docker -y
+        sudo systemctl start docker
+        sudo systemctl enable docker
+        sudo usermod -a -G docker ec2-user
+        sudo su - ec2-user
+        docker run -t -i -p 80:9000 awoisoak/photo-shop
+        EOF
 }
 
 # Upload public key to aws from a previously manually generated key par
