@@ -7,7 +7,7 @@ sudo usermod -a -G docker ec2-user
 sudo su - ec2-user
 
 sudo echo "[Unit]
-Description=Run Photoshop service
+Description=Run Photo-shop service
 After=network.target
 
 [Service]
