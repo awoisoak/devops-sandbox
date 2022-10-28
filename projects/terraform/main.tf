@@ -4,39 +4,23 @@ resource "aws_instance" "web_server" {
   ami           = "ami-0de5311b2a443fb89" #Amazon Linux image based in CentOS
   instance_type = "t2.micro"
   key_name      = aws_key_pair.photoshop_key.key_name
-
-  user_data = <<-EOF
-        #! /bin/bash
-        sudo yum update -y
-        sudo yum install docker -y
-        sudo systemctl start docker
-        sudo systemctl enable docker
-        sudo usermod -a -G docker ec2-user
-        sudo su - ec2-user
-
-        sudo echo "[Unit]
-        Description=Run Photoshop service
-        After=network.target
-
-        [Service]
-        Type=simple
-        Restart=always
-        RestartSec=1
-        User=ec2-user
-        ExecStart=/usr/bin/docker run -t -p 80:9000 awoisoak/photo-shop
-
-        [Install]
-        WantedBy=multi-user.target" | sudo tee /etc/systemd/system/photoshop.service
-        systemctl start photoshop
-        systemctl enable photoshop
-        EOF
+  user_data     = file("./setup_server.sh")
 }
+
+###############
+# Security
+###############
 
 # Upload public key to aws from a previously manually generated key par
 resource "aws_key_pair" "photoshop_key" {
   key_name   = "photoshop_key"
   public_key = file("/Users/awo/.ssh/aws_id_rsa.pub")
 }
+
+
+###############
+# Networking
+###############
 
 # Create an Elastic IP to make sure the webserver gets a fixed ip
 resource "aws_eip" "web_server_ip" {
