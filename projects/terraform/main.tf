@@ -169,6 +169,15 @@ resource "aws_security_group" "sg_database" {
     to_port         = 3306
     protocol        = "tcp"
   }
+
+  #TODO  Temporarily allow ssh connection for debugging purposes
+  ingress {
+    description = "[TEMP] Allow ssh connection for debugging purposes"
+    cidr_blocks = [var.my_ip]
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+  }
 }
 
 ###############
@@ -179,7 +188,7 @@ resource "aws_instance" "web_server" {
   instance_type          = "t2.micro"
   subnet_id              = aws_subnet.tokyo_public_subnet_1.id
   key_name               = aws_key_pair.photoshop_key.key_name
-  user_data              = file("./setup_server.sh")
+  user_data              = file("/scripts/setup_web_server.sh")
   vpc_security_group_ids = [aws_security_group.sg_web_server.id]
 
 }

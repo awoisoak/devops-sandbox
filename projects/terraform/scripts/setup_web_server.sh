@@ -1,4 +1,5 @@
 #! /bin/bash
+echo "#### Install dependencies and setup Docker service" 
 sudo yum update -y
 sudo yum install docker -y
 sudo systemctl start docker
@@ -6,6 +7,7 @@ sudo systemctl enable docker
 sudo usermod -a -G docker ec2-user
 sudo su - ec2-user
 
+echo "#### Creating service to run photo-shop web server" 
 sudo echo "[Unit]
 Description=Run Photo-shop service
 After=network.target
