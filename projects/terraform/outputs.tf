@@ -6,7 +6,7 @@ output "web_public_ip" {
 
 output "web_public_dns" {
   description = "The public DNS of the web server"
-  value       = aws_eip.web_server_ip.public_ip
+  value       = aws_eip.web_server_ip.public_dns
   depends_on  = [aws_eip.web_server_ip]
 }
 

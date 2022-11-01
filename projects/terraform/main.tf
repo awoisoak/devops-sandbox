@@ -1,4 +1,3 @@
-
 ###############
 # Security
 ###############
@@ -6,19 +5,13 @@
 # Upload public key to aws from a previously manually generated key par
 resource "aws_key_pair" "photoshop_key" {
   key_name   = "photoshop_key"
-  public_key = file("/Users/awo/.ssh/aws_id_rsa.pub")
+  public_key = file("/Users/awo/.ssh/aws_id_rsa.pub") #TODO move to vars
 }
 
 
 ###############
 # Networking
 ###############
-
-# # Since we are not currently creating our own VPC, this data source allow us to reference
-# # the default VPC created by AWS (172.31.0.0/16)
-# data "aws_vpc" "default" {
-#   default = true
-# }
 
 # Data source to have access to the AZ within the region
 data "aws_availability_zones" "available" {
@@ -172,10 +165,10 @@ resource "aws_security_group" "sg_database" {
 
   #TODO  Temporarily allow ssh connection for debugging purposes
   ingress {
-    description = "[TEMP] Allow ssh connection for debugging purposes"
-    cidr_blocks = [var.my_ip]
-    from_port   = 22
-    to_port     = 22
+    description = "[TEMP] Allow mysql traffic from all vpc"
+    cidr_blocks = [aws_vpc.tokyo_vpc.cidr_block]
+    from_port   = 3306
+    to_port     = 3306
     protocol    = "tcp"
   }
 }
@@ -188,9 +181,43 @@ resource "aws_instance" "web_server" {
   instance_type          = "t2.micro"
   subnet_id              = aws_subnet.tokyo_public_subnet_1.id
   key_name               = aws_key_pair.photoshop_key.key_name
-  user_data              = file("/scripts/setup_web_server.sh")
   vpc_security_group_ids = [aws_security_group.sg_web_server.id]
+  depends_on             = [aws_db_instance.database]
 
+  #TODO remove the nonsensitive, just for debugging purposes
+  user_data = templatefile("scripts/setup_web_server.sh", {
+    "db_address" = "${aws_db_instance.database.address}"
+  })
+
+  # TODO this should be done outside terraform Setup a SSH Port Forwarding to be able to connec to RDS trough the EC2
+  # TODO will not work because it needs the AWS_INSTANCE PUBLIC IP but creates a circular dependency wit aws_eip
+  # TODO try to do it at the end of terraform lifecycle or directly outside
+  # provisioner "local-exec" {
+
+  #   interpreter = ["/bin/bash", "-c"]
+  #   command     = <<-EOT
+  #             ssh -i "$PRIVATE_KEY_PATH" -N -L 6666:$DB_ADDRESS:3306 ec2-user@$WEB_ADDRESS&
+
+  #             echo "CREATE USER 'user'@'10.0.1.%' IDENTIFIED BY 'password';
+  #               GRANT ALL PRIVILEGES ON *.* TO 'user'@'10.0.1.%';
+  #               FLUSH PRIVILEGES;
+  #               CREATE DATABASE photosdb;
+  #               USE photosdb;
+  #               CREATE TABLE photos (id mediumint(8) unsigned NOT NULL auto_increment,name varchar(255) default NULL,price varchar(255) default NULL, image_url varchar(255) default NULL,PRIMARY KEY (id)) AUTO_INCREMENT=1;
+  #               INSERT INTO photos (name,price,image_url) VALUES ("Tohoku","100","Japan-1.jpg"),("Osaka","200","Japan-2.jpg"),("Senso-ji","300","Japan-3.jpg"),("Shibuya","50","Japan-4.jpg"),("Fuji reflection","90","Japan-5.jpg"),("Fuji sunrise","20","Japan-6.jpg"),("Kyoto","80","Japan-7.jpg"),("Hiroshima","150","Japan-8.jpg"),("Miyajima","150","Japan-9.jpg"),("Gozanoishi Shrine","150","Japan-10.jpg"),("Cold mountains","150","Japan-11.jpg"),("Warm mountains","150","Japan-12.jpg");" | sudo tee /tmp/setup_db.sql
+
+  #             "$SQL_CLIENT_PATH" -u $DB_USER -p$DB_PASSWORD -h 127.0.0.1 -P 6666 < /tmp/setup_db.sql
+  #   EOT
+  #   environment = {
+  #     PRIVATE_KEY_PATH = "/Users/awo/.ssh/aws_id_rsa.pub"           #TODO move out to variables
+  #     SQL_CLIENT_PATH  = "/opt/homebrew/opt/mysql-client/bin/mysql" #TODO move out to variables
+  #     DB_ADDRESS       = "${aws_db_instance.database.address}"
+  #     WEB_ADDRESS      = "${aws_eip.web_server_ip.public_ip}"
+  #     DB_USER          = "${var.db_username}"
+  #     DB_PASSWORD      = "${var.db_password}"
+  #   }
+
+  # }
 }
 
 resource "aws_db_instance" "database" {
@@ -206,8 +233,8 @@ resource "aws_db_instance" "database" {
   # The instance type of the RDS instance
   instance_class = "db.t3.micro"
 
-  #  The name of the database to create when the DB instance is created
-  db_name = "photosdb"
+  # #  The name of the database to create when the DB instance is created
+  # db_name = "photosdb" #already done by the sql script
 
   # Username for the master DB user
   username = var.db_username
@@ -227,17 +254,12 @@ resource "aws_db_instance" "database" {
   # Specifies whether any database modifications are applied immediately, or during the next maintenance window.allow_major_version_upgrade
   # Using apply_immediately can result in a brief downtime as the server reboots.
   apply_immediately = true
-
-  provisioner "local-exec" {
-    on_failure = continue
-    command    = "mysql --host=${self.address} --port=${self.port} --user=${self.username} --password=${self.password} < scripts/setup-db.sql"
-  }
 }
 
 # Create an Elastic IP to make sure the webserver gets a fixed ip
 resource "aws_eip" "web_server_ip" {
   vpc      = true
-  instance = aws_instance.web_server.id
+  instance = aws_instance.web_server.id #If not specified web_server won't get this ip. web_server won't need the associate_public_ip_address
 
   # Print public ip generated and approximated cost of current architecture
   provisioner "local-exec" {

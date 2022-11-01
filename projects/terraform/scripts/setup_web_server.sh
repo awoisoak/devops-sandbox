@@ -1,7 +1,11 @@
 #! /bin/bash
-echo "#### Install dependencies and setup Docker service" 
+
+echo "#### Update system and install dependencies "
 sudo yum update -y
 sudo yum install docker -y
+sudo yum install mysql -y
+
+echo "#### Setup Docker service" 
 sudo systemctl start docker
 sudo systemctl enable docker
 sudo usermod -a -G docker ec2-user
@@ -17,9 +21,11 @@ Type=simple
 Restart=always
 RestartSec=1
 User=ec2-user
-ExecStart=/usr/bin/docker run -t -p 80:9000 awoisoak/photo-shop
+ExecStart=/usr/bin/docker run -t -p 80:9000 -e DATABASE_URL=${db_address} awoisoak/photo-shop
 
 [Install]
 WantedBy=multi-user.target" | sudo tee /etc/systemd/system/photoshop.service
+
 systemctl start photoshop
 systemctl enable photoshop
+

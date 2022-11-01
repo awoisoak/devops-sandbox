@@ -7,6 +7,3 @@ variable "db_username" {
 variable "db_password" {
   sensitive = true
 }
-variable "my_ip" {
-  sensitive = true
-}
