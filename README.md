@@ -102,7 +102,7 @@ http://127.0.0.1:51781
 
 The Terraform files will deploy the next infrastructure
 
-<img width="1380" alt="aws" src="https://user-images.githubusercontent.com/11469990/199507512-b1e9e25c-9d9a-4219-b91c-cc426753750c.png">
+<img width="1380" alt="aws" src="https://user-images.githubusercontent.com/11469990/199511219-b2c25415-cd76-46a9-9346-a7868a51f17f.png">
 
 
 - The VPC contains 3 subnets: 1 public and 2 privates.
