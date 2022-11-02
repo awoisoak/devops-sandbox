@@ -1,8 +1,6 @@
-Repository to play with different devops scenarios found under [projects](https://github.com/awoisoak/devops-sandbox/tree/master/projects).
+Repository to play with different devops [projects](https://github.com/awoisoak/devops-sandbox/tree/master/projects).
 
-# Projects
-
-## Bash
+## Project Bash
 This script automatically build an environment with a Flask Python web server which exposes port 9000. In order to build the environment simply execute the script:
 
     bash photo-shop.sh
@@ -12,7 +10,7 @@ This script automatically build an environment with a Flask Python web server wh
 
 ----------
 
-## CI/CD 
+## Project CI/CD (Github Actions)
 Pipeline created with Github Actions for the [Camera Exposure Calculator]([https://github.com/awoisoak/photo-shop](https://github.com/awoisoak/Camera-Exposure-Calculator)) app. 
  ### ci.yaml
  This workflow will build and upload the corresponding artifacts for [each commit](https://github.com/awoisoak/Camera-Exposure-Calculator/actions/runs/3228411301) pushed to the repository.
@@ -32,7 +30,7 @@ Lastly will create a [Github Release](https://github.com/awoisoak/Camera-Exposur
 
 ----------
 
-## Docker Compose
+## Project Docker Compose
 
 This project uses Docker Compose to run the [photo-shop](https://github.com/awoisoak/photo-shop/) web server together to a Mariadb server. Both will run independently in their own Docker container.
 
@@ -46,7 +44,7 @@ The web server will display the images registered in the database and will expos
 ----------
 
 
-## Kubernetes
+## Project Kubernetes
 
 
 
@@ -98,7 +96,7 @@ http://127.0.0.1:51781
 ----------
 
 
-## Terraform
+## Project Terraform
 
 The Terraform files will deploy the next infrastructure
 
