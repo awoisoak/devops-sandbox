@@ -1,14 +1,12 @@
-[WIP]
+The Terraform files will deploy the next infrastructure
 
-This Terraform project will deploy the next infraestructure:
+<img width="1380" alt="aws" src="https://user-images.githubusercontent.com/11469990/199507512-b1e9e25c-9d9a-4219-b91c-cc426753750c.png">
 
-TODO
 
 - The VPC contains 3 subnets: 1 public and 2 privates.
 - The web server is located in the public one to be accessed by users.
 - The database is located in one of the private subnets 
-(RDS needs a 'DB subnet group' which requires at least 2 subnets in different AZ ([+info]((https://aws.amazon.com/rds/faqs/)) )
-
+- RDS needs a 'DB subnet group' which requires at least 2 subnets in different Availability Zones to create a new standby if needed in the future [(+info)](https://aws.amazon.com/rds/faqs/)
 - The web server only accepts http and ssh connections from outside (ssh should be limited to the admin ip in production)
 - The database only accepts connections in the port 3306 from the EC2 instance
 
