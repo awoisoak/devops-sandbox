@@ -5,7 +5,7 @@
 # Upload public key to aws from a previously manually generated key par
 resource "aws_key_pair" "photoshop_key" {
   key_name   = "photoshop_key"
-  public_key = file("/Users/awo/.ssh/aws_id_rsa.pub") #TODO move to vars
+  public_key = file(var.public_key_path)
 }
 
 
@@ -163,14 +163,24 @@ resource "aws_security_group" "sg_database" {
     protocol        = "tcp"
   }
 
-  #TODO  Temporarily allow ssh connection for debugging purposes
+  ###############################
+  #TODO  Temporarily allow extra connection for debugging purposes
+
   ingress {
-    description = "[TEMP] Allow mysql traffic from all vpc"
-    cidr_blocks = [aws_vpc.tokyo_vpc.cidr_block]
+    description = "[TEMP] Allow ssh traffic from everywhere"
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+  }
+  ingress {
+    description = "[TEMP] Allow mysql traffic from everywhere"
+    cidr_blocks = ["0.0.0.0/0"]
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
   }
+  ###################################
 }
 
 ###############
@@ -206,10 +216,9 @@ resource "aws_instance" "web_server" {
   #               CREATE TABLE photos (id mediumint(8) unsigned NOT NULL auto_increment,name varchar(255) default NULL,price varchar(255) default NULL, image_url varchar(255) default NULL,PRIMARY KEY (id)) AUTO_INCREMENT=1;
   #               INSERT INTO photos (name,price,image_url) VALUES ("Tohoku","100","Japan-1.jpg"),("Osaka","200","Japan-2.jpg"),("Senso-ji","300","Japan-3.jpg"),("Shibuya","50","Japan-4.jpg"),("Fuji reflection","90","Japan-5.jpg"),("Fuji sunrise","20","Japan-6.jpg"),("Kyoto","80","Japan-7.jpg"),("Hiroshima","150","Japan-8.jpg"),("Miyajima","150","Japan-9.jpg"),("Gozanoishi Shrine","150","Japan-10.jpg"),("Cold mountains","150","Japan-11.jpg"),("Warm mountains","150","Japan-12.jpg");" | sudo tee /tmp/setup_db.sql
 
-  #             "$SQL_CLIENT_PATH" -u $DB_USER -p$DB_PASSWORD -h 127.0.0.1 -P 6666 < /tmp/setup_db.sql
   #   EOT
   #   environment = {
-  #     PRIVATE_KEY_PATH = "/Users/awo/.ssh/aws_id_rsa.pub"           #TODO move out to variables
+  #     PRIVATE_KEY_PATH = "${var.private_key_path}"           
   #     SQL_CLIENT_PATH  = "/opt/homebrew/opt/mysql-client/bin/mysql" #TODO move out to variables
   #     DB_ADDRESS       = "${aws_db_instance.database.address}"
   #     WEB_ADDRESS      = "${aws_eip.web_server_ip.public_ip}"

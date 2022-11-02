@@ -1,8 +1,8 @@
 -- SQL script to initialize the DB
 -- The docker container will use any ip of the range of the public subnet (10.0.1.0/24) to connect to the DB
-CREATE USER 'user'@'$10.0.1.%' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON *.* TO 'user'@'$10.0.1.%';
-FLUSH PRIVILEGES;
+-- CREATE USER 'user'@'$10.0.1.%' IDENTIFIED BY 'password';
+-- GRANT ALL PRIVILEGES ON *.* TO 'user'@'$10.0.1.%';
+-- FLUSH PRIVILEGES;
 CREATE DATABASE photosdb;
 USE photosdb;
 CREATE TABLE photos (id mediumint(8) unsigned NOT NULL auto_increment,name varchar(255) default NULL,price varchar(255) default NULL, image_url varchar(255) default NULL,PRIMARY KEY (id)) AUTO_INCREMENT=1;
@@ -10,8 +10,7 @@ INSERT INTO photos (name,price,image_url) VALUES ("Tohoku","100","Japan-1.jpg"),
 
 
 
--- #TODO Database should still be setup with proper user for the docker process to access
--- #TODO do it in setup.db.sql
+-- #TODO The problem is that photoshop is trying to connect with the root user!!!!
 -- # [ec2-user@ip-10-0-1-221 log]$ sudo /usr/bin/docker run -t -p 800:9000 -e DATABASE_URL=terraform-20221101120402844300000002.c5pcsgq6i2fl.ap-northeast-1.rds.amazonaws.com awoisoak/photo-shop
 -- # Database URL:  terraform-20221101120402844300000002.c5pcsgq6i2fl.ap-northeast-1.rds.amazonaws.com
 -- #  * Serving Flask app 'app'

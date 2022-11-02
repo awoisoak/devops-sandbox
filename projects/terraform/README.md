@@ -15,11 +15,12 @@ TODO
 Since the RDS instance is not accesible outside the VPC for security reasons the conf file setup a SSH Port Forwarding to connect to the RDS through the EC2.
 
  `             ssh -i "$PRIVATE_KEY_PATH" -N -L 6666:$DB_ADDRESS:3306 ec2-user@$WEB_ADDRESS
-              "$SQL_CLIENT_PATH" -u $DB_USER -p$DB_PASSWORD -h 127.0.0.1 -P 6666 < scripts/setup_db.sql`
+              $SQL_CLIENT_PATH -u $DB_USER -p$DB_PASSWORD -h 127.0.0.1 -P 6666 < scripts/setup_db.sql`
 
  The Docker container already running the web-server will have to be restarted to be able to connect to the DB:
             `ssh -v -i "[PRIVATE_KEY]" ec2-user@[PUBLIC_DNS]`
             `docker container stop $(docker container list -qa)` 
+ The docker container is running on a service so it will be restarted automatically and this time it should be able to connect succesfully to the DB           
 
 
 
