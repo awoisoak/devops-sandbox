@@ -14,8 +14,12 @@ TODO
 
 In order to initialize the DB with some data we will have to do it through a SSH tunnel (SSH port forwarding) through the EC2:
 
- `ssh -i "$PRIVATE_KEY_PATH" -N -L 6666:$DB_ADDRESS:3306 ec2-user@$WEB_ADDRESS`
+```consoles
+sh -i "$PRIVATE_KEY_PATH" -N -L 6666:$DB_ADDRESS:3306 ec2-user@$WEB_ADDRESS
+```
 
-With the tunnel above setup, all connections againt our localhost:6666 will be fordward to the RDS:3306 allowing us to populate the DB:         
+With the tunnel above setup, all connections againt our localhost:6666 will be forward to the 3306 port of the RDS allowing us to populate the DB:         
 
-`mysql -u $DB_USER -p$DB_PASSWORD -h 127.0.0.1 -P 6666 < scripts/setup_db.sql`
+```console
+mysql -u $DB_USER -p$DB_PASSWORD -h 127.0.0.1 -P 6666 < scripts/setup_db.sql
+```
