@@ -5,17 +5,17 @@ This project runs a Kubernetes cluster with two deployments: one for a [photo-sh
 <img src="https://github.com/awoisoak/devops-sandbox/blob/master/projects/kubernetes/diagram.png" width="500" />
 </p>
 
- ### db-deploy.yaml
+ ##### db-deploy.yaml
 Database deployment consist of just one replica set.
 As explained in [mariadb Docker image](https://hub.docker.com/_/mariadb) the initialization of a fresh database is done via scripts found in /docker-entrypoint-initdb.d. 
 The scripts are defined via a Config map (db-configmap.yaml) and are located in the above directory via a mounted volume. 
- ### db-service.yaml 
+ ##### db-service.yaml 
 Cluster Ip service to expose the database 
- ### db-configmap.yaml
+ ##### db-configmap.yaml
 Config map to contain the sql script used to initialize the database
- ### web-deploy.yaml
+ ##### web-deploy.yaml
 Frontend deployments of [photo-shop](https://github.com/awoisoak/photo-shop) consisting of 2 replica sets.
- ### web-service.yaml
+ ##### web-service.yaml
 NodePort service to expose the frontend outside of the cluster
 
 
