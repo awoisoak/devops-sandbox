@@ -151,10 +151,9 @@ resource "aws_security_group" "sg_web_server" {
 resource "aws_security_group" "sg_database" {
   name        = "sg_database"
   description = "Security group to be used by the Database"
-  # We need to specify our VPC, otherwise by default will be applied to the region's default VPC
-  vpc_id = aws_vpc.tokyo_vpc.id
+  vpc_id      = aws_vpc.tokyo_vpc.id
 
-  # Only the EC2 should be able to connect to the DB
+  # Only allow EC2 to be able to connect to the DB
   ingress {
     description     = "Allow Mysql traffic only from web server"
     security_groups = [aws_security_group.sg_web_server.id]
@@ -162,25 +161,6 @@ resource "aws_security_group" "sg_database" {
     to_port         = 3306
     protocol        = "tcp"
   }
-
-  ###############################
-  #TODO  Temporarily allow extra connection for debugging purposes
-
-  ingress {
-    description = "[TEMP] Allow ssh traffic from everywhere"
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-  }
-  ingress {
-    description = "[TEMP] Allow mysql traffic from everywhere"
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
-  }
-  ###################################
 }
 
 ###############
@@ -194,39 +174,9 @@ resource "aws_instance" "web_server" {
   vpc_security_group_ids = [aws_security_group.sg_web_server.id]
   depends_on             = [aws_db_instance.database]
 
-  #TODO remove the nonsensitive, just for debugging purposes
   user_data = templatefile("scripts/setup_web_server.sh", {
     "db_address" = "${aws_db_instance.database.address}"
   })
-
-  # TODO this should be done outside terraform Setup a SSH Port Forwarding to be able to connec to RDS trough the EC2
-  # TODO will not work because it needs the AWS_INSTANCE PUBLIC IP but creates a circular dependency wit aws_eip
-  # TODO try to do it at the end of terraform lifecycle or directly outside
-  # provisioner "local-exec" {
-
-  #   interpreter = ["/bin/bash", "-c"]
-  #   command     = <<-EOT
-  #             ssh -i "$PRIVATE_KEY_PATH" -N -L 6666:$DB_ADDRESS:3306 ec2-user@$WEB_ADDRESS&
-
-  #             echo "CREATE USER 'user'@'10.0.1.%' IDENTIFIED BY 'password';
-  #               GRANT ALL PRIVILEGES ON *.* TO 'user'@'10.0.1.%';
-  #               FLUSH PRIVILEGES;
-  #               CREATE DATABASE photosdb;
-  #               USE photosdb;
-  #               CREATE TABLE photos (id mediumint(8) unsigned NOT NULL auto_increment,name varchar(255) default NULL,price varchar(255) default NULL, image_url varchar(255) default NULL,PRIMARY KEY (id)) AUTO_INCREMENT=1;
-  #               INSERT INTO photos (name,price,image_url) VALUES ("Tohoku","100","Japan-1.jpg"),("Osaka","200","Japan-2.jpg"),("Senso-ji","300","Japan-3.jpg"),("Shibuya","50","Japan-4.jpg"),("Fuji reflection","90","Japan-5.jpg"),("Fuji sunrise","20","Japan-6.jpg"),("Kyoto","80","Japan-7.jpg"),("Hiroshima","150","Japan-8.jpg"),("Miyajima","150","Japan-9.jpg"),("Gozanoishi Shrine","150","Japan-10.jpg"),("Cold mountains","150","Japan-11.jpg"),("Warm mountains","150","Japan-12.jpg");" | sudo tee /tmp/setup_db.sql
-
-  #   EOT
-  #   environment = {
-  #     PRIVATE_KEY_PATH = "${var.private_key_path}"           
-  #     SQL_CLIENT_PATH  = "/opt/homebrew/opt/mysql-client/bin/mysql" #TODO move out to variables
-  #     DB_ADDRESS       = "${aws_db_instance.database.address}"
-  #     WEB_ADDRESS      = "${aws_eip.web_server_ip.public_ip}"
-  #     DB_USER          = "${var.db_username}"
-  #     DB_PASSWORD      = "${var.db_password}"
-  #   }
-
-  # }
 }
 
 resource "aws_db_instance" "database" {
@@ -241,9 +191,6 @@ resource "aws_db_instance" "database" {
 
   # The instance type of the RDS instance
   instance_class = "db.t3.micro"
-
-  # #  The name of the database to create when the DB instance is created
-  # db_name = "photosdb" #already done by the sql script
 
   # Username for the master DB user
   username = var.db_username

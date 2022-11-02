@@ -11,3 +11,5 @@ projects/terraform/terraform.tfstate
 projects/terraform/terraform.tfstate.backup
 
 *.backup
+
+projects/terraform/cheatsheet
