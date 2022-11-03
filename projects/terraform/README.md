@@ -22,3 +22,12 @@ With the tunnel above setup, all connections againt our localhost:6666 will be f
 ```console
 mysql -u $DB_USER -p$DB_PASSWORD -h 127.0.0.1 -P 6666 < scripts/setup_db.sql
 ```
+
+Assuming Terraform was setup with the corresponding AWS account the infrastructure can be deployed with the next command:
+```console
+terraform apply -var-file="secrets.tfvars"
+```
+All components are using Free Tier components but make sure you destroy them once you stop working with them to avoid being charged:
+```console
+terraform destroy -var-file="secrets.tfvars"
+```
