@@ -12,11 +12,11 @@ This script automatically build an environment with a Flask Python web server wh
 
 ## Project CI/CD (Github Actions)
 Pipeline created with Github Actions for the [Camera Exposure Calculator]([https://github.com/awoisoak/photo-shop](https://github.com/awoisoak/Camera-Exposure-Calculator)) app. 
- ### ci.yaml
+ #### ci.yaml
  This workflow will build and upload the corresponding artifacts for [each commit](https://github.com/awoisoak/Camera-Exposure-Calculator/actions/runs/3228411301) pushed to the repository.
 
 
- ### google_play_deployment.yml.yaml
+ #### google_play_deployment.yml.yaml
 
  This workflow allows the deployment of the app to [Google Play](https://play.google.com/store/apps/details?id=com.awoisoak.exposure) with a simple interface.
 
