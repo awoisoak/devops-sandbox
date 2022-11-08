@@ -1,0 +1,17 @@
+web1 ansible_connection=docker ansible_host=ansible-web-1
+web2 ansible_connection=docker ansible_host=ansible-web-2
+web3 ansible_connection=docker ansible_host=ansible-web-3
+
+load-balancer ansible_connection=docker ansible_host=nginx-load-balancer ansible_python_interpreter=/usr/bin/python3
+
+
+[web-servers]
+web1
+web2
+web3
+
+[all-servers]
+web1
+web2
+web3
+load-balancer
