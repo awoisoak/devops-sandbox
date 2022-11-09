@@ -12,6 +12,7 @@
           - dnsutils
           - netcat
           - net-tools
+          - iputils-ping
 
 # - name: Ubuntu-db tasks
 #   hosts: ubuntu-db
