@@ -21,6 +21,8 @@ services:
   web:
     image: awoisoak/photo-shop
     tty: true
+    environment:
+      - DATABASE_URL=db
     depends_on:
       - db
     networks: 
