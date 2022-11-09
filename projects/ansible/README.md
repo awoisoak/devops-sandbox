@@ -9,5 +9,15 @@ We can not made use of a static inventory like [inventory.txt](https://github.co
 
     docker compose up --scale web=3
 
-Because of that, in this scenario we need a dynamic [docker container inventory](https://). On this case 
-ansible-galaxy collection install community.docker
+Because of that, in this scenario we need a dynamic [docker container inventory](https://docs.ansible.com/ansible/latest/collections/community/docker/docker_containers_inventory.html):
+
+    ansible-galaxy collection install community.docker
+    pip install docker
+
+To get the dynamic list of Docker hosts:
+
+    ansible-inventory -i inventory.docker.yaml --list --yaml
+
+To get all possibles metadata to be used to make groups:
+
+    ansible-inventory -i inventory.docker.yaml --list | grep -i docker_

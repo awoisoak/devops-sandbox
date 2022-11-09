@@ -27,7 +27,7 @@ services:
     networks: 
       - "photoshop-network"    
   load-balancer:
-    container_name: nginx-load-balancer
+    container_name: load-balancer
     image: awoisoak/nginx-python
     tty: true
     depends_on:

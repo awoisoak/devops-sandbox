@@ -14,19 +14,20 @@
           - net-tools
           - iputils-ping
 
+- name: Check service status
+  hosts: localhost
+  tasks:
+    - name: Check web server and DB connection
+      ansible.builtin.uri:
+        url: http://localhost:8080
+        return_content: true
+      register: this
+      failed_when: "'Connected to DB' not in this.content"
 
 
-#     - name: Start mysql server
-#       ansible.builtin.service:
-#         name: mariadb
-#         state: started
+#TODO for the web servers trigger a command that verifies curl returns "connected to the db"?
+#TODO 
 
-#     - name: Setup database
-#       ansible.builtin.command: mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -h ubuntu-db -P 3306 < /tmp/setup.db.sql
-#       register: output
-#       changed_when: output # TODO figure out changed_when
-
-# TODO set dynamic inventory
 # TODO enable some extra service?
 
 # Use different os family system?
