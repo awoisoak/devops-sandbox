@@ -6,7 +6,7 @@ load-balancer ansible_connection=docker ansible_host=load-balancer # ansible_pyt
 
 db ansible_connection=docker ansible_host=mariadb #ansible_python_interpreter=/usr/bin/python3
 
-[web-servers]
+[web_servers]
 web1
 web2
 web3

@@ -4,4 +4,4 @@ strict: False
 add_legacy_groups: False
 
 groups:
-  web-servers: "'web' in docker_name"
+  web_servers: "'web' in docker_name"

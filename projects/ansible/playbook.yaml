@@ -24,9 +24,21 @@
       register: this
       failed_when: "'Connected to DB' not in this.content"
 
+- name: Setup web servers
+  hosts: web_servers
+  tasks:
+    - name: Create/Ensure group developers exists
+      ansible.builtin.group:
+        name: developers
+        state: present
+        gid: 1111
 
-#TODO for the web servers trigger a command that verifies curl returns "connected to the db"?
-#TODO 
+    - name: Create users
+      ansible.builtin.user:
+        name: winstonsmith
+        shell: /bin/bash
+        group: developers
+
 
 # TODO enable some extra service?
 
