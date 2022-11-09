@@ -39,17 +39,12 @@
         shell: /bin/bash
         group: developers
 
-
-# TODO enable some extra service?
-
-# Use different os family system?
-
-
-  #TODO we should not run commands with root    
-  #TODO use ansible for something else that we already had with docker compose and awoisoak/photo-shop image?    
-
-
-      # ansible.builtin.command: "{{ item }} chdir=/src/package/"
-      # with_items:
-      #   - service mysql start
-      # register: output
+- name: Setup DB
+  hosts: mariadb
+  tasks:
+    - name: Ensure mariadb service is started and enabled
+      # Docker images do not have systemctl, otherwise use ansible.builtin.systemd
+      ansible.builtin.sysvinit:
+        name: mariadb
+        state: started
+        enabled: true
