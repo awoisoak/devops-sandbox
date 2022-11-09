@@ -8,11 +8,9 @@
     - name: Install common dependencies
       ansible.builtin.apt:
         pkg:
-          - curl
-          - dnsutils
-          - netcat
-          - net-tools
-          - iputils-ping
+          - git
+          - vim
+          - cron
 
 - name: Check service status
   hosts: localhost
@@ -39,12 +37,35 @@
         shell: /bin/bash
         group: developers
 
+- name: Setup load balancer
+  hosts: load-balancer
+  tasks:
+    - name: Pull repository
+      ansible.builtin.git:
+        repo: 'https://github.com/awoisoak/Camera-Exposure-Calculator.git'
+        dest: /opt/
+        version: 1.8
+
 - name: Setup DB
   hosts: mariadb
   tasks:
-    - name: Ensure mariadb service is started and enabled
+    - name: Upload script
+      ansible.builtin.copy:
+        src: ./scripts/spam.sh
+        dest: /opt/spam.sh
+        owner: root
+        group: root
+        mode: 'u=rw,g=rw,o=r'
+
+    - name: Ensure cron service is enabled
       # Docker images do not have systemctl, otherwise use ansible.builtin.systemd
       ansible.builtin.sysvinit:
-        name: mariadb
+        name: cron
         state: started
         enabled: true
+
+    - name: Add script to cron to run every minute
+      ansible.builtin.cron:
+        name: "check dirs"
+        minute: "*"
+        job: "sh /opt/spam.sh"
