@@ -5,7 +5,6 @@ services:
     container_name: mariadb
     image: awoisoak/mariadb-python
     tty: true
-    # tty: true
     environment:
       MARIADB_ROOT_PASSWORD: password
       MARIADB_DATABASE: photosdb
