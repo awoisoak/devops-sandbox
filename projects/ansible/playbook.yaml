@@ -1,5 +1,5 @@
 - name: All server tasks
-  hosts: all-servers
+  hosts: all
   tasks:
     - name: Update apt
       ansible.builtin.apt:
@@ -14,49 +14,23 @@
           - net-tools
           - iputils-ping
 
-# - name: Ubuntu-db tasks
-#   hosts: ubuntu-db
-#   tasks:
-#     - name: Install db server dependencies
-#       ansible.builtin.apt:
-#         pkg:
-#           - mariadb-server
+
 
 #     - name: Start mysql server
 #       ansible.builtin.service:
 #         name: mariadb
 #         state: started
 
-#     - name: Copy sql script
-#       ansible.builtin.copy:
-#         src: scripts/setup-db.sql
-#         dest: /tmp/setup-db.sql
-#         owner: root
-#         group: root
-#         mode: u+rw,g-rw,o-x
-
 #     - name: Setup database
 #       ansible.builtin.command: mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -h ubuntu-db -P 3306 < /tmp/setup.db.sql
 #       register: output
 #       changed_when: output # TODO figure out changed_when
 
-# TODO we can run docker images from Ansible! no need to use docker compose! is through ansible galaxy made by the community
-# maybe trhey already come with python by default?? 
+# TODO set dynamic inventory
+# TODO enable some extra service?
 
-# TODO Trying to execute scripts/setup-db.sql in docker compose is useless since mysql is not even installed!
+# Use different os family system?
 
-# TODO would be nice to setup nginx with load balancer against several ubuntu-web instances
-# could be easily done with docker-compose -d --scale ubuntu-web=5
-
-# TODO set path as variable
-# Use same tasks for all system dependencies by checking the os family system?
-# ot not possible/worth it since they nmeed different packages?
-
-
-          # - python3-pip
-          # - curl
-          # - default-mysql-client
-          # - default-libmysqlclient-dev
 
   #TODO we should not run commands with root    
   #TODO use ansible for something else that we already had with docker compose and awoisoak/photo-shop image?    

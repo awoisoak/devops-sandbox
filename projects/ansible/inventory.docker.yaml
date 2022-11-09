@@ -1,0 +1,7 @@
+plugin: community.docker.docker_containers
+docker_host: unix://var/run/docker.sock
+strict: False
+add_legacy_groups: False
+
+groups:
+  web-servers: "'web' in docker_name"

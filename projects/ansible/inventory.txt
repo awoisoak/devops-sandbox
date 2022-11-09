@@ -11,7 +11,7 @@ web1
 web2
 web3
 
-[all-servers]
+[all]
 load-balancer
 web1
 web2
