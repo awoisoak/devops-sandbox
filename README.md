@@ -5,8 +5,9 @@ This script automatically build an environment with a Flask Python web server wh
 
     bash photo-shop.sh
 
-![alt](https://raw.githubusercontent.com/awoisoak/devops-sandbox/master/projects/bash/script.gif)
-
+<p align="center">
+<img width="500" alt="deploy" src="https://raw.githubusercontent.com/awoisoak/devops-sandbox/master/projects/bash/script.gif">
+</p>
 
 ----------
 
