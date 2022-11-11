@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  db:
+    container_name: mariadb
+    image: awoisoak/mariadb-python
+    tty: true
+    environment:
+      MARIADB_ROOT_PASSWORD: password
+      MARIADB_DATABASE: photosdb
+      MARIADB_USER: user
+      MARIADB_PASSWORD: password
+    volumes:
+      # persist data files into `datadir` volume managed by docker
+      - datadir:/var/lib/mysql
+      # bind-mount any sql files that should be run while initializing
+      - ./scripts/setup-db.sql:/docker-entrypoint-initdb.d/setup-db.sql
+    networks: 
+      - "photoshop-network"
+  web:
+    image: awoisoak/photo-shop
+    tty: true
+    environment:
+      - DATABASE_URL=db
+    depends_on:
+      - db
+    networks: 
+      - "photoshop-network"    
+  load-balancer:
+    container_name: load-balancer
+    image: awoisoak/nginx-python
+    tty: true
+    depends_on:
+      - web
+    ports:
+      - "8080:80"
+    volumes:
+      - './nginx.conf:/etc/nginx/nginx.conf'
+    networks: 
+      - "photoshop-network"
+      
+networks:
+ photoshop-network:
+volumes:
+  datadir:

@@ -1,0 +1,71 @@
+- name: All server tasks
+  hosts: all
+  tasks:
+    - name: Update apt
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install common dependencies
+      ansible.builtin.apt:
+        pkg:
+          - git
+          - vim
+          - cron
+
+- name: Check service status
+  hosts: localhost
+  tasks:
+    - name: Check web server and DB connection
+      ansible.builtin.uri:
+        url: http://localhost:8080
+        return_content: true
+      register: this
+      failed_when: "'Connected to DB' not in this.content"
+
+- name: Setup web servers
+  hosts: web_servers
+  tasks:
+    - name: Create/Ensure group developers exists
+      ansible.builtin.group:
+        name: developers
+        state: present
+        gid: 1111
+
+    - name: Create users
+      ansible.builtin.user:
+        name: winstonsmith
+        shell: /bin/bash
+        group: developers
+
+- name: Setup load balancer
+  hosts: load-balancer
+  tasks:
+    - name: Pull repository
+      ansible.builtin.git:
+        repo: 'https://github.com/awoisoak/Camera-Exposure-Calculator.git'
+        dest: /opt/
+        version: 1.8
+
+- name: Setup DB
+  hosts: mariadb
+  tasks:
+    - name: Upload script
+      ansible.builtin.copy:
+        src: ./scripts/spam.sh
+        dest: /opt/spam.sh
+        owner: root
+        group: root
+        mode: 'u=rw,g=rw,o=r'
+
+    - name: Ensure cron service is enabled
+      # Docker images do not have systemctl, otherwise use ansible.builtin.systemd
+      ansible.builtin.sysvinit:
+        name: cron
+        state: started
+        enabled: true
+
+    - name: Add script to cron to run every minute
+      ansible.builtin.cron:
+        name: "check dirs"
+        minute: "*"
+        job: "sh /opt/spam.sh"
