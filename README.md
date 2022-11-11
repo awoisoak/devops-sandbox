@@ -174,7 +174,7 @@ Once evertyhing is setup we can trigger Docker Compose which will launch a Load 
     docker compose up --scale web=3
 
 
-We can now create our [playbook.yaml](https://github.com/awoisoak/devops-sandbox/blob/ansible/projects/ansible/inventory.txt) to automate all kind of tasks in the different servers.     
+We can now create our [playbook.yaml](https://github.com/awoisoak/devops-sandbox/blob/master/projects/ansible/playbook.yaml) to automate all kind of tasks in the different servers.     
 
     docker compose up --scale web=3
     ansible-playbook -i inventory.txt playbook.yaml
