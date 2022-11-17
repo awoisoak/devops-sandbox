@@ -71,8 +71,7 @@ services:
       - datadir:/var/lib/mysql
       # bind-mount any sql files that should be run while initializing
       - ./scripts/setup-db.sql:/docker-entrypoint-initdb.d/setup-db.sql
-  web:
-    container_name: photo-shop-web-server
+  photo-shop:
     image: awoisoak/photo-shop
     tty: true
     environment:
