@@ -17,10 +17,23 @@ services:
       - prometheus-data:/prometheus
       # - /etc/prometheus:/etc/prometheus
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./alert-rules.yml:/etc/prometheus/alert-rules.yml
     restart: unless-stopped
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
 
+  #TODO Once you have multiple files, it may be better to add the entire directory as a volume rather than individual files.
+
+  alertmanager:
+      container_name: alertmanager
+      image: prom/alertmanager:latest
+      # privileged: true # to run dockers with root permissions on the host
+      volumes:
+          - ./alertmanager/alertmanager.yml:/etc/prometheus/alertmanager/alertmanager.yml
+      command:
+          - '--config.file=/etc/prometheus/alertmanager/alertmanager.yml'
+      ports:
+          - '9093:9093'
   grafana:
     image: grafana/grafana-oss:latest
     container_name: grafana
