@@ -5,13 +5,14 @@ volumes:
     driver: local
   grafana-data:
     driver: local  
+  datadir:
 
 services:
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
     ports:
-      - "9090:9090"
+      - "10000:9090"
     volumes:
       - prometheus-data:/prometheus
       # - /etc/prometheus:/etc/prometheus
@@ -24,7 +25,7 @@ services:
     image: grafana/grafana-oss:latest
     container_name: grafana
     ports:
-      - "3000:3000"
+      - "11000:3000"
     volumes:
       - grafana-data:/var/lib/grafana
     restart: unless-stopped    
@@ -37,15 +38,14 @@ services:
     pid: host
     restart: unless-stopped
     volumes:
+      # - '/:/host:ro,rslave' Not working because of https://github.com/prometheus/node_exporter/issues/1231
       - '/:/host:ro'  
   
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.46.0 # latest tag is not updated...
-                                            # https://github.com/google/cadvisor/issues/3066    
-                                            # To manual check versions: https://github.com/google/cadvisor/releases      
+    image: gcr.io/cadvisor/cadvisor:v0.46.0 # latest tag is not updated... https://github.com/google/cadvisor/issues/3066    
     container_name: cadvisor
     ports:
-      - "8080:8080"
+      - "12000:8080"
     volumes:
       - /:/rootfs:ro
       # - /var/run:/var/run:ro
@@ -56,3 +56,36 @@ services:
     devices:
       - /dev/kmsg
     restart: unless-stopped
+
+  db:
+    container_name: mariadb
+    image: mariadb
+    tty: true
+    environment:
+      MARIADB_ROOT_PASSWORD: password
+      MARIADB_DATABASE: photosdb
+      MARIADB_USER: user
+      MARIADB_PASSWORD: password
+    volumes:
+      # persist data files into `datadir` volume managed by docker
+      - datadir:/var/lib/mysql
+      # bind-mount any sql files that should be run while initializing
+      - ./scripts/setup-db.sql:/docker-entrypoint-initdb.d/setup-db.sql
+  web:
+    container_name: photo-shop-web-server
+    image: awoisoak/photo-shop
+    tty: true
+    environment:
+      - DATABASE_URL=db
+    depends_on:
+      - db  
+  load-balancer:
+    container_name: load-balancer
+    image: nginx
+    tty: true
+    depends_on:
+      - web
+    ports:
+      - "8080:80"
+    volumes:
+      - ${PWD}/nginx.conf:/etc/nginx/nginx.conf
