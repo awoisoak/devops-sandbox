@@ -96,7 +96,7 @@ services:
     image: nginx
     tty: true
     depends_on:
-      - web
+      - photo-shop
     ports:
       - "8080:80"
     volumes:
