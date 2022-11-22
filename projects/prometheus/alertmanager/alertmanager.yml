@@ -1,6 +1,6 @@
 route:
   receiver: 'gmail'
-  repeat_interval: 5m
+  repeat_interval: 3h
   group_by: [ alertname ]
 receivers:
   - name: 'gmail'
