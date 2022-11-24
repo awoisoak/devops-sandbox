@@ -43,16 +43,17 @@ services:
       - grafana-data:/var/lib/grafana
     restart: unless-stopped    
 
-  node_exporter:
-    image: quay.io/prometheus/node-exporter:latest
-    container_name: node_exporter
-    command:
-      - '--path.rootfs=/host'    
-    pid: host
-    restart: unless-stopped
-    volumes:
-      # - '/:/host:ro,rslave' Not working because of https://github.com/prometheus/node_exporter/issues/1231
-      - '/:/host:ro' 
+# Node exporter does not work correctly in mac and gets spammy with permissions issues
+#   node_exporter:
+#     image: quay.io/prometheus/node-exporter:latest
+#     container_name: node_exporter
+#     command:
+#       - '--path.rootfs=/host'    
+#     pid: host
+#     restart: unless-stopped
+#     volumes:
+#       # - '/:/host:ro,rslave' Not working because of https://github.com/prometheus/node_exporter/issues/1231
+#       - '/:/host:ro' 
 
   
   cadvisor:
