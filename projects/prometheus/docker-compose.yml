@@ -53,9 +53,6 @@ services:
     volumes:
       # - '/:/host:ro,rslave' Not working because of https://github.com/prometheus/node_exporter/issues/1231
       - '/:/host:ro' 
-    # Network added just to avoid some annoying permissions denied errors when run on mac https://github.com/prometheus/node_exporter/issues/610   
-    networks: 
-      - awo
 
   
   cadvisor:
@@ -104,7 +101,4 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ${PWD}/nginx.conf:/etc/nginx/nginx.conf
-
-networks:
-  awo:      
+      - ${PWD}/nginx.conf:/etc/nginx/nginx.conf  
