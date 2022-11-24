@@ -22,8 +22,6 @@ services:
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
 
-  #TODO Once you have multiple files, it may be better to add the entire directory as a volume rather than individual files.
-
   alertmanager:
       container_name: alertmanager
       image: prom/alertmanager:latest
@@ -86,6 +84,21 @@ services:
       - datadir:/var/lib/mysql
       # bind-mount any sql files that should be run while initializing
       - ./scripts/setup-db.sql:/docker-entrypoint-initdb.d/setup-db.sql
+
+  # An stand alone web server that exposes its own metrics
+  stand-alone-photo-shop:
+    container_name: photo-shop
+    image: awoisoak/photo-shop
+    tty: true
+    environment:
+      - DATABASE_URL=db
+    depends_on:
+      - db  
+    ports:
+      - "9000:9000"   
+
+  # Web server instances that are exposed through a load-balancer (name will be created dynamically)
+  # TODO Prometheus scraping will not work here. A Pushing metric approach should be implemented  
   photo-shop:
     image: awoisoak/photo-shop
     tty: true
@@ -93,6 +106,7 @@ services:
       - DATABASE_URL=db
     depends_on:
       - db  
+
   load-balancer:
     container_name: load-balancer
     image: nginx
