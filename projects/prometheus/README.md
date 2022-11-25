@@ -1,4 +1,5 @@
 A Prometheus server is setup together with an instance of AlertManager, Grafana, and a bunch of servers and Exporters.
+
 [AlertManager](https://prometheus.io/docs/alerting/latest/alertmanager/) is configured to send alert notifications via email.
 
 How metrics are generated:
