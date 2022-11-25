@@ -1,0 +1,14 @@
+route:
+  receiver: 'gmail'
+  repeat_interval: 3h
+  group_by: [ alertname ]
+receivers:
+  - name: 'gmail'
+    email_configs:
+      - to: RECEIVER@gmail.com
+        from: SENDER@gmail.com
+        smarthost: smtp.gmail.com:587
+        auth_username: SENDER@gmail.com
+        auth_identity: SENDER@gmail.com
+        auth_password: [GMAIL_APP_PASWORD] #https://support.google.com/accounts/answer/185833?hl=en
+        send_resolved: true

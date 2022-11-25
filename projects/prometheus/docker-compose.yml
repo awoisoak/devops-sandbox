@@ -1,0 +1,119 @@
+version: '3'
+
+volumes:
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local  
+  datadir:
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "10000:9090"
+    volumes:
+      - prometheus-data:/prometheus
+      # - /etc/prometheus:/etc/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./alert-rules.yml:/etc/prometheus/alert-rules.yml
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+
+  alertmanager:
+      container_name: alertmanager
+      image: prom/alertmanager:latest
+      # privileged: true # to run dockers with root permissions on the host
+      volumes:
+          - ./alertmanager/alertmanager.yml:/etc/prometheus/alertmanager/alertmanager.yml
+      command:
+          - '--config.file=/etc/prometheus/alertmanager/alertmanager.yml'
+      ports:
+          - '9093:9093'
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    ports:
+      - "11000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    restart: unless-stopped    
+
+# Node exporter does not work correctly in mac and gets spammy with permissions issues
+#   node_exporter:
+#     image: quay.io/prometheus/node-exporter:latest
+#     container_name: node_exporter
+#     command:
+#       - '--path.rootfs=/host'    
+#     pid: host
+#     restart: unless-stopped
+#     volumes:
+#       # - '/:/host:ro,rslave' Not working because of https://github.com/prometheus/node_exporter/issues/1231
+#       - '/:/host:ro' 
+
+  
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.46.0 # latest tag is not updated... https://github.com/google/cadvisor/issues/3066    
+    container_name: cadvisor
+    ports:
+      - "12000:8080"
+    volumes:
+      - /:/rootfs:ro
+      # - /var/run:/var/run:ro
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+    restart: unless-stopped
+
+  db:
+    container_name: mariadb
+    image: mariadb
+    tty: true
+    environment:
+      MARIADB_ROOT_PASSWORD: password
+      MARIADB_DATABASE: photosdb
+      MARIADB_USER: user
+      MARIADB_PASSWORD: password
+    volumes:
+      # persist data files into `datadir` volume managed by docker
+      - datadir:/var/lib/mysql
+      # bind-mount any sql files that should be run while initializing
+      - ./scripts/setup-db.sql:/docker-entrypoint-initdb.d/setup-db.sql
+
+  # An stand alone web server that exposes its own metrics
+  stand-alone-photo-shop:
+    container_name: photo-shop
+    image: awoisoak/photo-shop
+    tty: true
+    environment:
+      - DATABASE_URL=db
+    depends_on:
+      - db  
+    ports:
+      - "9000:9000"   
+
+  # Web server instances that are exposed through a load-balancer (name will be created dynamically)
+  # TODO Prometheus scraping will not work here. A Pushing metric approach should be implemented  
+  photo-shop:
+    image: awoisoak/photo-shop
+    tty: true
+    environment:
+      - DATABASE_URL=db
+    depends_on:
+      - db  
+
+  load-balancer:
+    container_name: load-balancer
+    image: nginx
+    tty: true
+    depends_on:
+      - photo-shop
+    ports:
+      - "8080:80"
+    volumes:
+      - ${PWD}/nginx.conf:/etc/nginx/nginx.conf  
