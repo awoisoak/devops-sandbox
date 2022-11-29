@@ -13,7 +13,7 @@ Boto3 API documentation for EC2
 https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2.html
 
 Clients are low level APIs
-Resources are wrapper over clients that is friendlier specially returning objects in requests.
+Resources are wrapper over clients that are friendlier (specially returning objects in requests).
 Resources do not have access to all APIs that clients provide though.
 
 
@@ -23,8 +23,24 @@ ec2_resource: EC2ServiceResource = boto3.resource('ec2', region_name="ap-northea
 VPC_NAME = "My Python VPC"
 
 
-def create_vpcs():
-    """Create VPCs"""
+def create_vpc_with_client():
+    """Create VPC with client"""
+    response = ec2_client.create_vpc(CidrBlock="10.1.0.0/16")
+    vpc_id = response.get("Vpc").get("VpcId")
+    ec2_client.create_subnet(CidrBlock="10.1.1.0/24", VpcId=vpc_id)
+    ec2_client.create_subnet(CidrBlock="10.1.2.0/24", VpcId=vpc_id)
+    ec2_client.create_tags(
+        Tags=[{
+            'Key': 'Name',
+            'Value': VPC_NAME
+        }],
+        Resources=[
+            vpc_id
+        ])
+
+
+def create_vpc_with_resource():
+    """Create VPC with resource"""
     new_vpc = ec2_resource.create_vpc(CidrBlock="10.0.0.0/16")
     new_vpc.create_subnet(CidrBlock="10.0.1.0/24")
     new_vpc.create_subnet(CidrBlock="10.0.2.0/24")
@@ -34,7 +50,6 @@ def create_vpcs():
             'Value': VPC_NAME
         }]
     )
-    # TODO create VPC with client to see the difference respect using resources
 
 
 def get_vpcs():
@@ -64,11 +79,12 @@ def remove_vpcs(vpc_ids):
         for subnet in subnets.get("Subnets"):
             subnet_id = subnet.get("SubnetId")
             response = ec2_client.delete_subnet(SubnetId=subnet_id)
-            print(f'Removing subnet {subnet_id}... response:{response.get("ResponseMetadata")["HTTPStatusCode"]}')
+            print(f'Removing {subnet_id}... response:{response.get("ResponseMetadata")["HTTPStatusCode"]}')
 
         response = ec2_client.delete_vpc(VpcId=vpc_id)
-        print(f'Remove {vpc_id}... {response.get("ResponseMetadata")["HTTPStatusCode"]}')
+        print(f'Removing {vpc_id}... {response.get("ResponseMetadata")["HTTPStatusCode"]}')
 
 
-create_vpcs()
+create_vpc_with_client()
+create_vpc_with_resource()
 remove_vpcs(get_vpcs())
