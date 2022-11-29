@@ -25,10 +25,10 @@ VPC_NAME = "My Python VPC"
 
 def create_vpc_with_client():
     """Create VPC with client"""
-    response = ec2_client.create_vpc(CidrBlock="10.1.0.0/16")
+    response = ec2_client.create_vpc(CidrBlock="10.0.0.0/16")
     vpc_id = response.get("Vpc").get("VpcId")
-    ec2_client.create_subnet(CidrBlock="10.1.1.0/24", VpcId=vpc_id)
-    ec2_client.create_subnet(CidrBlock="10.1.2.0/24", VpcId=vpc_id)
+    ec2_client.create_subnet(CidrBlock="10.0.1.0/24", VpcId=vpc_id)
+    ec2_client.create_subnet(CidrBlock="10.0.2.0/24", VpcId=vpc_id)
     ec2_client.create_tags(
         Tags=[{
             'Key': 'Name',
@@ -41,9 +41,9 @@ def create_vpc_with_client():
 
 def create_vpc_with_resource():
     """Create VPC with resource"""
-    new_vpc = ec2_resource.create_vpc(CidrBlock="10.0.0.0/16")
-    new_vpc.create_subnet(CidrBlock="10.0.1.0/24")
-    new_vpc.create_subnet(CidrBlock="10.0.2.0/24")
+    new_vpc = ec2_resource.create_vpc(CidrBlock="10.1.0.0/16")
+    new_vpc.create_subnet(CidrBlock="10.1.1.0/24")
+    new_vpc.create_subnet(CidrBlock="10.1.2.0/24")
     new_vpc.create_tags(
         Tags=[{
             'Key': 'Name',
@@ -82,7 +82,7 @@ def remove_vpcs(vpc_ids):
             print(f'Removing {subnet_id}... response:{response.get("ResponseMetadata")["HTTPStatusCode"]}')
 
         response = ec2_client.delete_vpc(VpcId=vpc_id)
-        print(f'Removing {vpc_id}... {response.get("ResponseMetadata")["HTTPStatusCode"]}')
+        print(f'Removing {vpc_id}... response:{response.get("ResponseMetadata")["HTTPStatusCode"]}')
 
 
 create_vpc_with_client()
