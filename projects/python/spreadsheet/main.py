@@ -22,7 +22,6 @@ products_under_10_items = {}
 
 def round_2(number):
     """Round the passed float to the closest 2 decimals value"""
-    print(f"original:{number}, rounded:{round(number, 2)}")
     return round(number, 2)
 
 
