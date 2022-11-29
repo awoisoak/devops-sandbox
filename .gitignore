@@ -13,3 +13,6 @@ projects/terraform/terraform.tfstate.backup
 *.backup
 
 *cheatsheet
+
+*venv
+*.idea
