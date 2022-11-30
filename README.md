@@ -132,6 +132,10 @@ To trigger the infraestructure setup:
 ```console
 terraform apply -var-file="secrets.tfvars"
 ```
+Once you are done don't forget to destroy all resources to avoid AWS charges!
+```console
+terraform destroy -var-file="secrets.tfvars"
+```
 
 In order to initialize the DB with some data we will have to do it through a SSH tunnel (SSH port forwarding) through the EC2:
 
