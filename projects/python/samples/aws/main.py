@@ -18,7 +18,9 @@ Resources do not have access to all APIs that clients provide though.
 
 
 """
+# noinspection PyTypeChecker
 ec2_client: EC2Client = boto3.client('ec2', region_name="ap-northeast-1")
+# noinspection PyTypeChecker
 ec2_resource: EC2ServiceResource = boto3.resource('ec2', region_name="ap-northeast-1")
 VPC_NAME = "My Python VPC"
 
