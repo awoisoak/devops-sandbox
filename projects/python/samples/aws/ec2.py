@@ -1,7 +1,8 @@
 import boto3
+import schedule
 from mypy_boto3_ec2.service_resource import EC2ServiceResource
 from mypy_boto3_ec2.client import EC2Client
-from utils import printg
+from utils import printg, printr, printy
 
 """
 This script will check the state of the current EC2 instances running in the corresponding region
@@ -34,25 +35,28 @@ def todo_describe_instance():
 
 
 def check_state_and_status():
-    statuses = ec2_client.describe_instance_status()
+    statuses = ec2_client.describe_instance_status(IncludeAllInstances=True)
     for s in statuses.get("InstanceStatuses"):
         print("---------------------")
         print(s.get("InstanceId"))
         print("---------------------")
-
-        print(f'  Instance State: {s.get("InstanceState").get("Name")}')
-
+        state = s.get("InstanceState").get("Name")
+        match state:  # Syntax available from Python 3.10
+            case "running":
+                printg('  Instance State: running')
+            case "pending":
+                printy('  Instance State: pending')
+            case _:
+                printr(f'  Instance State: {state}')
         print(f'  Instance Status: {s.get("InstanceStatus").get("Status")}')
-        for i in s.get("InstanceStatus").get("Details"):
-            print(f'    {i.get("Name")} -> {i.get("Status")}')
-
         print(f'  System Status: {s.get("SystemStatus").get("Status")}')
-        for system_status in s.get("SystemStatus").get("Details"):
-            print(f'    {system_status.get("Name")} -> {system_status.get("Status")}')
 
 
 def execute():
     printg("\nGrabbing EC2 information...")
     todo_describe_instance()
-    printg("\nChecking EC2 instances statuses...")
-    check_state_and_status()
+
+    printg("\nChecking EC2 instances statuses every 10 seconds...")
+    schedule.every(5).seconds.do(check_state_and_status)
+    while True:
+        schedule.run_pending()
