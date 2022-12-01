@@ -1,4 +1,5 @@
 import ec2
+import volume_backups
 import vpc
 
 """
@@ -20,3 +21,4 @@ Resources do not have access to all APIs that clients provide though.
 
 vpc.execute()
 ec2.execute()
+volume_backups.execute()

@@ -56,7 +56,7 @@ def execute():
     printg("\nGrabbing EC2 information...")
     todo_describe_instance()
 
-    printg("\nChecking EC2 instances statuses every 10 seconds...")
+    printg("\nChecking EC2 instances statuses every 5 seconds...")
     schedule.every(5).seconds.do(check_state_and_status)
     while True:
         schedule.run_pending()
