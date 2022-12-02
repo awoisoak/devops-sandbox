@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta
+from time import sleep
+
 import boto3
 import schedule
 from mypy_boto3_ec2.service_resource import EC2ServiceResource
@@ -13,7 +16,17 @@ ec2_client: EC2Client = boto3.client('ec2', region_name="ap-northeast-1")
 ec2_resource: EC2ServiceResource = boto3.resource('ec2', region_name="ap-northeast-1")
 
 
-def todo_describe_instance():
+def create_instances():
+    """ Create a couple of EC2 instances that will be used by the script"""
+    ec2_resource.create_instances(
+        ImageId="ami-0de5311b2a443fb89",
+        InstanceType="t2.micro",
+        MinCount=2,
+        MaxCount=2
+    )
+
+
+def describe_instances():
     reservations = ec2_client.describe_instances()
     for r in reservations.get("Reservations"):
         instances = r.get("Instances")
@@ -23,15 +36,9 @@ def todo_describe_instance():
             print("---------------------")
             print(f'ImageId: {i.get("ImageId")} ')
             print(f'Type: {i.get("InstanceType")} ')
-            print(f'KernelId: {i.get("KernelId")} ')
-            print(f'KeyName: {i.get("KeyName")} ')
             print(f'LaunchTime: {i.get("LaunchTime")} ')
             print(f'Monitoring: {i.get("Monitoring")} ')
-            print(f'PrivateIpAddress: {i.get("PrivateIpAddress")} ')
             print(f'PublicIpAddress: {i.get("PublicIpAddress")} ')
-            print(f'PublicDnsName: {i.get("PublicDnsName")} ')
-            print(f'SubnetId: {i.get("SubnetId")} ')
-            print(f'VpcId: {i.get("VpcId")} ')
 
 
 def check_state_and_status():
@@ -50,13 +57,37 @@ def check_state_and_status():
                 printr(f'  Instance State: {state}')
         print(f'  Instance Status: {s.get("InstanceStatus").get("Status")}')
         print(f'  System Status: {s.get("SystemStatus").get("Status")}')
+        print("##################################")
+
+
+def delete_instances():
+    """ Delete all instances available in the region"""
+    manager = ec2_resource.instances.filter()
+    response = manager.terminate()
+
+    for i in response[0].get("TerminatingInstances"):
+        print(f'Terminating {i.get("InstanceId")}... '
+              f'{i.get("PreviousState").get("Name")} -> {i.get("CurrentState").get("Name")}')
 
 
 def execute():
-    printg("\nGrabbing EC2 information...")
-    todo_describe_instance()
+    printg("\nCreate a couple of EC2 instances...")
+    create_instances()
 
-    printg("\nChecking EC2 instances statuses every 5 seconds...")
+    printg("\nGrabbing EC2 information...")
+    describe_instances()
+
+    printg("\nChecking EC2 instances statuses every 5 seconds and let it run a given time...")
     schedule.every(5).seconds.do(check_state_and_status)
+
+    end_time = datetime.now() + timedelta(seconds=21)
     while True:
         schedule.run_pending()
+        if datetime.now() >= end_time:
+            break
+
+    printg("\nWake up and continue with the script")
+    sleep(1)
+
+    printg("\nDelete all EC2 instances...")
+    delete_instances()
