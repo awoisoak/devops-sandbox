@@ -2,7 +2,7 @@ import boto3
 from mypy_boto3_ec2.service_resource import EC2ServiceResource
 from mypy_boto3_ec2.client import EC2Client
 
-from utils import printg
+from utils.print_utils import printg
 
 """
 This script will create VPCs with subnets, list them and finally destroy them.

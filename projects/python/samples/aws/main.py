@@ -1,6 +1,8 @@
 import ec2
+import restore_volume
 import volume_backups
 import vpc
+from utils import aws_utils
 
 """
 This app interacts with the AWS account.
@@ -22,3 +24,5 @@ Resources do not have access to all APIs that clients provide though.
 vpc.execute()
 ec2.execute()
 volume_backups.execute()
+restore_volume.execute()
+aws_utils.clean_all_resources()

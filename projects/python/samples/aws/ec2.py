@@ -5,7 +5,8 @@ import boto3
 import schedule
 from mypy_boto3_ec2.service_resource import EC2ServiceResource
 from mypy_boto3_ec2.client import EC2Client
-from utils import printg, printr, printy
+
+from utils.print_utils import printg, printr, printy
 
 """
 This script will check the state of the current EC2 instances running in the corresponding region
@@ -18,15 +19,19 @@ ec2_resource: EC2ServiceResource = boto3.resource('ec2', region_name="ap-northea
 
 def create_instances(count):
     """ Create {count} instances of EC2 instances that will be used by the script"""
-    response = ec2_resource.create_instances(
+    instances = ec2_resource.create_instances(
         ImageId="ami-0de5311b2a443fb89",
         InstanceType="t2.micro",
         MinCount=count,
         MaxCount=count
     )
-    for r in response:
-        print(f'{r.id} created')
+    for i in instances:
+        print(f'{i.id} created')
+    return instances
 
+
+# TODO ignore terminated instances
+# TODO use ec2_resource instead?
 def describe_instances():
     reservations = ec2_client.describe_instances()
     for r in reservations.get("Reservations"):
@@ -60,17 +65,6 @@ def check_state_and_status():
         print(f'  System Status: {s.get("SystemStatus").get("Status")}')
         print("##################################")
 
-
-def delete_instances():
-    """ Delete all instances available in the region"""
-    manager = ec2_resource.instances.filter()
-    response = manager.terminate()
-
-    for i in response[0].get("TerminatingInstances"):
-        print(f'Terminating {i.get("InstanceId")}... '
-              f'{i.get("PreviousState").get("Name")} -> {i.get("CurrentState").get("Name")}')
-
-
 def execute():
     printg("\nCreate a couple of EC2 instances...")
     create_instances(2)
@@ -89,6 +83,3 @@ def execute():
 
     printg("\nWake up and continue with the script")
     sleep(1)
-
-    printg("\nDelete all EC2 instances...")
-    delete_instances()
