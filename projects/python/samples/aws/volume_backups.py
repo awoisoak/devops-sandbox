@@ -11,8 +11,14 @@ account_id = boto3.client('sts').get_caller_identity().get('Account')
 
 
 def create_snapshots():
-    """ Create a snapshot for all available volumes"""
-    for volume in ec2_resource.volumes.all():
+    """ Create a snapshot for all volumes with not deleting/delete/error state"""
+    for volume in ec2_resource.volumes.all().filter(
+            Filters=[
+                {
+                    'Name': 'status',
+                    'Values': ['creating', 'available', 'in-use']
+                },
+            ]):
         snapshot = volume.create_snapshot()
         print(f'{snapshot.id} created from {volume.volume_id} (used by {volume.attachments[0].get("InstanceId")})')
 
@@ -23,7 +29,7 @@ def list_snapshots():
         print(f'{snapshot.id} ({snapshot.volume_id})')
 
 
-def remove_snapshots():
+def delete_snapshots():
     """ Remove all Snapshots own by our aws account"""
     # While filtering, instead of grabbing our account id we can use the self keyword as below
     for snapshot in ec2_resource.snapshots.filter(OwnerIds=["self"]):
@@ -36,5 +42,5 @@ def execute():
     create_snapshots()
     printg("\nListing all available volumes...")
     list_snapshots()
-    printg("\nRemoving all snapshots...")
-    remove_snapshots()
+    printg("\nDeleting all snapshots...")
+    delete_snapshots()

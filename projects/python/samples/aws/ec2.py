@@ -16,15 +16,16 @@ ec2_client: EC2Client = boto3.client('ec2', region_name="ap-northeast-1")
 ec2_resource: EC2ServiceResource = boto3.resource('ec2', region_name="ap-northeast-1")
 
 
-def create_instances():
-    """ Create a couple of EC2 instances that will be used by the script"""
-    ec2_resource.create_instances(
+def create_instances(count):
+    """ Create {count} instances of EC2 instances that will be used by the script"""
+    response = ec2_resource.create_instances(
         ImageId="ami-0de5311b2a443fb89",
         InstanceType="t2.micro",
-        MinCount=2,
-        MaxCount=2
+        MinCount=count,
+        MaxCount=count
     )
-
+    for r in response:
+        print(f'{r.id} created')
 
 def describe_instances():
     reservations = ec2_client.describe_instances()
@@ -72,7 +73,7 @@ def delete_instances():
 
 def execute():
     printg("\nCreate a couple of EC2 instances...")
-    create_instances()
+    create_instances(2)
 
     printg("\nGrabbing EC2 information...")
     describe_instances()
