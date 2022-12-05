@@ -30,7 +30,6 @@ def create_instances(count):
     return instances
 
 
-# TODO ignore terminated instances
 def describe_instances():
     """Print information of all instances except the ones with a 'terminated' state"""
     reservations = ec2_client.describe_instances(Filters=[
