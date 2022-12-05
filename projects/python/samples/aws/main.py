@@ -26,4 +26,3 @@ ec2.execute()
 volume_backups.execute()
 restore_volume.execute()
 aws_utils.clean_all_resources()
-#TODO use Waiters instead of While true? https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2.html#waiters

@@ -16,7 +16,6 @@ ec2_resource: EC2ServiceResource = boto3.resource('ec2', region_name="ap-northea
 
 
 def execute():
-    # TODO use the instance created in the other script?
     printg("\nCreate an EC2 instance...")
     instance = ec2.create_instances(1)[0]
 
@@ -31,20 +30,18 @@ def execute():
     for volume in ec2_resource.Instance(instance.instance_id).volumes.all():
         snapshot = volume_backups.create_snapshots_in_volume(volume)
 
-    # TODO Get the AZ from here
-    # An error occurred (InvalidVolume.ZoneMismatch) when calling the AttachVolume operation: The volume 'vol-046e20596b2a9b973' is not in the same availability zone as instance 'i-09f1ea349cf6083a3'
-    # instances = ec2_client.describe_instances(InstanceIds=[instance.instance_id])
-    # for i in instances:
-    #     printr(i)
-
     printg("\nWait until Snapshot is in a successful state...")
     waiter_snapshot = ec2_client.get_waiter('snapshot_completed')
     waiter_snapshot.wait()
 
     printg("\nCreate new Volume from the snapshot...")
+
+    # The volume needs to be created in the same AZ as the instance we are going to attach it to
+    az = instance.network_interfaces[0].subnet.availability_zone
+
     new_volume = ec2_resource.create_volume(
         SnapshotId=snapshot.id,
-        AvailabilityZone="ap-northeast-1c",
+        AvailabilityZone=az,
         TagSpecifications=[
             {
                 'ResourceType': 'volume',
