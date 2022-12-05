@@ -2,16 +2,15 @@ import requests
 import schedule
 from requests import ConnectionError
 
-from BaseContainer import BaseContainer
 from LocalContainer import LocalContainer
 from RemoteContainer import RemoteContainer
 from utils.email_utils import send_alert
-from utils.print_utils import printg, printr, printy
+from utils.print_utils import printg, printr
 
 
 def monitoring():
     try:
-        response = requests.get("http://localhost:9000/")
+        response = requests.get(uri)
         if response.status_code == 200:
             printg("Application is running successfully")
         else:
@@ -25,17 +24,16 @@ def monitoring():
         container.restart_container()
 
 
-url = input("Input ip:port of remote web server or leave it empty to start a container locally")
-container: BaseContainer
-if url:
-    # TODO
-    container = RemoteContainer()
+ip = input("Input ip:port of aws ec2 instance or leave it empty to start a container locally\n")
+if ip:
+    uri = f'http://{ip}'
+    container = RemoteContainer(ip)
 else:
-    url = "http://localhost:9000/"
+    uri = "http://localhost:9000/"
     container = LocalContainer()
 
 container.run_container()
-printy(container)
+print(type(container))
 
 schedule.every(6).seconds.do(monitoring)
 try:
