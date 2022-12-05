@@ -46,6 +46,8 @@ def execute():
     #         break
 
     printg("\nCreate new Volume from the snapshot...")
+    # TODO botocore.exceptions.ClientError: An error occurred (IncorrectState) when calling the CreateVolume operation: Snapshot is in invalid state - pending
+
     new_volume = ec2_resource.create_volume(
         SnapshotId=snapshot.id,
         AvailabilityZone="ap-northeast-1c",

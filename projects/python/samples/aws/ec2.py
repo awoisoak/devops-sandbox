@@ -33,7 +33,13 @@ def create_instances(count):
 # TODO ignore terminated instances
 # TODO use ec2_resource instead?
 def describe_instances():
-    reservations = ec2_client.describe_instances()
+    """Print information of all instances except the ones with a 'terminated' state"""
+    reservations = ec2_client.describe_instances(Filters=[
+        {
+            'Name': 'instance-state-name',
+            'Values': ["pending", "running", "shutting-down", "stopping", "stopped"]
+        }
+    ])
     for r in reservations.get("Reservations"):
         instances = r.get("Instances")
         for i in instances:
@@ -43,12 +49,16 @@ def describe_instances():
             print(f'ImageId: {i.get("ImageId")} ')
             print(f'Type: {i.get("InstanceType")} ')
             print(f'LaunchTime: {i.get("LaunchTime")} ')
-            print(f'Monitoring: {i.get("Monitoring")} ')
             print(f'PublicIpAddress: {i.get("PublicIpAddress")} ')
 
 
 def check_state_and_status():
-    statuses = ec2_client.describe_instance_status(IncludeAllInstances=True)
+    statuses = ec2_client.describe_instance_status(IncludeAllInstances=True, Filters=[
+        {
+            'Name': 'instance-state-name',
+            'Values': ["pending", "running", "shutting-down", "stopping", "stopped"]
+        }
+    ])
     for s in statuses.get("InstanceStatuses"):
         print("---------------------")
         print(s.get("InstanceId"))
@@ -63,7 +73,8 @@ def check_state_and_status():
                 printr(f'  Instance State: {state}')
         print(f'  Instance Status: {s.get("InstanceStatus").get("Status")}')
         print(f'  System Status: {s.get("SystemStatus").get("Status")}')
-        print("##################################")
+    print("##################################")
+
 
 def execute():
     printg("\nCreate a couple of EC2 instances...")

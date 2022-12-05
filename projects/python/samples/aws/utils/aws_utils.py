@@ -3,7 +3,7 @@ from mypy_boto3_ec2.service_resource import EC2ServiceResource
 from mypy_boto3_ec2.client import EC2Client
 
 # noinspection PyTypeChecker
-from utils.print_utils import printg
+from utils.print_utils import printg, printy
 
 ec2_client: EC2Client = boto3.client('ec2', region_name="ap-northeast-1")
 # noinspection PyTypeChecker
@@ -31,6 +31,7 @@ def clean_all_resources():
                 },
             ]
         )
+        # TODO Handle edge casebotocore.exceptions.ClientError: An error occurred (VolumeInUse) when calling the DeleteVolume operation: Volume vol-03436d5a2cacf0f66 is currently attached to i-0e3970b02966cfa79
 
         for reservation in reservations.get("Reservations"):
             instances = reservation.get("Instances")
@@ -41,7 +42,6 @@ def clean_all_resources():
                 print(f' Terminating {r.get("InstanceId")} '
                       f'{r.get("PreviousState").get("Name")} > {r.get("CurrentState").get("Name")}')
 
-    #TODO Handle edge casebotocore.exceptions.ClientError: An error occurred (VolumeInUse) when calling the DeleteVolume operation: Volume vol-03436d5a2cacf0f66 is currently attached to i-0e3970b02966cfa79
     def delete_volumes():
         for volume in ec2_resource.volumes.all():
             response = volume.delete()
