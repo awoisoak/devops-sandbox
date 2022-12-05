@@ -39,6 +39,5 @@ class LocalContainer(BaseContainer):
         self.container.restart()
 
     def stop_container(self, msg):
-        super().stop_container()
-        printr(f"stopping container due to {msg}...")
+        super().stop_container(msg)
         self.container.stop()
