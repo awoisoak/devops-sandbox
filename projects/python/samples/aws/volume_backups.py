@@ -54,5 +54,5 @@ def list_snapshots():
 def execute():
     printg("\nCreating Snapshots of current volumes...")
     create_snapshots()
-    printg("\nListing all available volumes...")
+    printg("\nListing all available snapshots...")
     list_snapshots()

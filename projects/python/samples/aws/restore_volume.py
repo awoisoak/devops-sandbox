@@ -29,7 +29,6 @@ def execute():
     snapshot: Snapshot
 
     for volume in ec2_resource.Instance(instance.instance_id).volumes.all():
-        printy(volume)
         snapshot = volume_backups.create_snapshots_in_volume(volume)
 
     # TODO Get the AZ from here
@@ -46,7 +45,6 @@ def execute():
     #         break
 
     printg("\nCreate new Volume from the snapshot...")
-    # TODO botocore.exceptions.ClientError: An error occurred (IncorrectState) when calling the CreateVolume operation: Snapshot is in invalid state - pending
 
     new_volume = ec2_resource.create_volume(
         SnapshotId=snapshot.id,
@@ -63,6 +61,7 @@ def execute():
             }
         ]
     )
+    print(f'{new_volume} created from {snapshot.id}')
 
     printg('\nWaiting until the volume state become "available"...')
 

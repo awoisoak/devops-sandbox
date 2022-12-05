@@ -31,7 +31,6 @@ def clean_all_resources():
                 },
             ]
         )
-        # TODO Handle edge casebotocore.exceptions.ClientError: An error occurred (VolumeInUse) when calling the DeleteVolume operation: Volume vol-03436d5a2cacf0f66 is currently attached to i-0e3970b02966cfa79
 
         for reservation in reservations.get("Reservations"):
             instances = reservation.get("Instances")
@@ -39,13 +38,17 @@ def clean_all_resources():
             response = ec2_client.terminate_instances(InstanceIds=ids)
 
             for r in response.get("TerminatingInstances"):
-                print(f' Terminating {r.get("InstanceId")} '
-                      f'{r.get("PreviousState").get("Name")} > {r.get("CurrentState").get("Name")}')
+                print(f'Terminating {r.get("InstanceId")} '
+                      f'({r.get("PreviousState").get("Name")} > {r.get("CurrentState").get("Name")})')
 
     def delete_volumes():
+        """ Delete al volumes"""
+        printg("Wait for all volumes to be available before deleting them...")
+        volume_waiter = ec2_client.get_waiter('volume_available')
+        volume_waiter.wait()
         for volume in ec2_resource.volumes.all():
             response = volume.delete()
-            print(f' Deleting {volume.volume_id}')
+            print(f'Deleting {volume.volume_id}')
 
     printg("\nDelete Snapshots...")
     delete_snapshots()
