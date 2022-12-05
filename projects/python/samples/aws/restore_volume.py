@@ -16,13 +16,13 @@ ec2_resource: EC2ServiceResource = boto3.resource('ec2', region_name="ap-northea
 
 
 def execute():
+    # TODO use the instance created in the other script?
     printg("\nCreate an EC2 instance...")
     instance = ec2.create_instances(1)[0]
 
     printg('\nWait until EC2 instance is in "running" state...')
-    while True:
-        if ec2_resource.Instance(instance.instance_id).state.get("Name") == "running":
-            break
+    waiter_instance = ec2_client.get_waiter('instance_running')
+    waiter_instance.wait(InstanceIds=[instance.instance_id])
 
     printg("\nCreate snapshots...")
 
@@ -32,20 +32,16 @@ def execute():
         snapshot = volume_backups.create_snapshots_in_volume(volume)
 
     # TODO Get the AZ from here
+    # An error occurred (InvalidVolume.ZoneMismatch) when calling the AttachVolume operation: The volume 'vol-046e20596b2a9b973' is not in the same availability zone as instance 'i-09f1ea349cf6083a3'
     # instances = ec2_client.describe_instances(InstanceIds=[instance.instance_id])
     # for i in instances:
     #     printr(i)
 
-    printg("\nWaiting 10s for the created Snapshot to be ready to be used...")
-    sleep(10)
-    # printg('\nWaiting until the Snapshot is in an "available" state...')
-    # while True:
-    #     print(snapshot.state)
-    #     if snapshot.state == "available":
-    #         break
+    printg("\nWait until Snapshot is in a successful state...")
+    waiter_snapshot = ec2_client.get_waiter('snapshot_completed')
+    waiter_snapshot.wait()
 
     printg("\nCreate new Volume from the snapshot...")
-
     new_volume = ec2_resource.create_volume(
         SnapshotId=snapshot.id,
         AvailabilityZone="ap-northeast-1c",
@@ -65,11 +61,10 @@ def execute():
 
     printg('\nWaiting until the volume state become "available"...')
 
-    while True:
-        if ec2_resource.Volume(new_volume.volume_id).state == "available":
-            ec2_resource.Instance(instance.instance_id).attach_volume(
-                VolumeId=new_volume.volume_id,
-                Device='/dev/xvdb'
-                # TODO find a way to automate this /dev/xdva is used by the current volume in the instance
-            )
-        break
+    waiter_volume = ec2_client.get_waiter('volume_available')
+    waiter_volume.wait(VolumeIds=[new_volume.volume_id])
+    ec2_resource.Instance(instance.instance_id).attach_volume(
+        VolumeId=new_volume.volume_id,
+        Device='/dev/xvdb'
+        # TODO find a way to automate this /dev/xdva is used by the current volume in the instance
+    )
