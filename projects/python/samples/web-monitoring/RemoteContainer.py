@@ -56,6 +56,5 @@ class RemoteContainer(BaseContainer):
             printy(output)
             ssh.close()
             return output
-        # noinspection PyTypeChecker
-        except:
-            printr('SSH Error:{msg}')
+        except Exception as msg:
+            printr(f'SSH Error:{msg}')

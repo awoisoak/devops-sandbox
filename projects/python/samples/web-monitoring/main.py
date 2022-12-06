@@ -24,6 +24,8 @@ def monitoring():
     try:
         response = requests.get(uri)
         if response.status_code == 200:
+            if not take_action:
+                send_alert("Subject: Application is running again!\n Nice script!")
             take_action = True
             printg("Application is running successfully")
         elif take_action:
