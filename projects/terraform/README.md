@@ -11,9 +11,23 @@ The Terraform files will deploy the next infrastructure
 - The web server only accepts http and ssh connections from outside (ssh should be limited to the admin ip in production)
 - The database only accepts connections in the port 3306 from the EC2 instance
 
+
+To see the exact changes Terraform will apply: 
+```console
+terraform plan -var-file="secrets.tfvars"
+```
+To trigger the infraestructure setup:
+```console
+terraform apply -var-file="secrets.tfvars"
+```
+Once you are done don't forget to destroy all resources to avoid AWS charges!
+```console
+terraform destroy -var-file="secrets.tfvars"
+```
+
 In order to initialize the DB with some data we will have to do it through a SSH tunnel (SSH port forwarding) through the EC2:
 
-```consoles
+```console
 sh -i "$PRIVATE_KEY_PATH" -N -L 6666:$DB_ADDRESS:3306 ec2-user@$WEB_ADDRESS
 ```
 
