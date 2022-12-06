@@ -124,7 +124,7 @@ The Terraform files will deploy the next infrastructure
 - The database only accepts connections in the port 3306 from the EC2 instance
 
 
-To see the exact changes Terraform will apply: 
+To see the exact changes that Terraform will apply: 
 ```console
 terraform plan -var-file="secrets.tfvars"
 ```
