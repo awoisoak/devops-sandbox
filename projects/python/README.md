@@ -1,10 +1,10 @@
 Different handy Python projects for DevOps
 
 ### Spreadsheet
-Run operations given a spreadsheet and add new fields to it
+    Run operations given a spreadsheet and add new fields to it
 
 ### AWS
-Run several operations against an AWS account
+    Run several operations against an AWS account
 
     - Create VPCs
     - Create EC2 instances
@@ -14,7 +14,7 @@ Run several operations against an AWS account
     - Clean resources
 
 ### Web monitoring
-Monitor websites 
+    Monitor websites 
 
     - Handle different environments:
         - Running web server in a local container
