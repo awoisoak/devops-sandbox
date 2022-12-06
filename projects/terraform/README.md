@@ -12,6 +12,11 @@ The Terraform files will deploy the next infrastructure
 - The database only accepts connections in the port 3306 from the EC2 instance
 
 
+
+
+This project assumes that Terraform was setup with the corresponding AWS account.
+
+
 To see the exact changes that Terraform will apply: 
 ```console
 terraform plan -var-file="secrets.tfvars"
@@ -20,7 +25,8 @@ To trigger the infraestructure setup:
 ```console
 terraform apply -var-file="secrets.tfvars"
 ```
-Once you are done don't forget to destroy all resources to avoid AWS charges!
+All components are using Free Tier components but make sure you destroy them once you stop working with them to avoid being charged:
+
 ```console
 terraform destroy -var-file="secrets.tfvars"
 ```
@@ -35,13 +41,4 @@ With the tunnel above setup, all connections againt our localhost:6666 will be f
 
 ```console
 mysql -u $DB_USER -p$DB_PASSWORD -h 127.0.0.1 -P 6666 < scripts/setup_db.sql
-```
-
-Assuming Terraform was setup with the corresponding AWS account the infrastructure can be deployed with the next command:
-```console
-terraform apply -var-file="secrets.tfvars"
-```
-All components are using Free Tier components but make sure you destroy them once you stop working with them to avoid being charged:
-```console
-terraform destroy -var-file="secrets.tfvars"
 ```
