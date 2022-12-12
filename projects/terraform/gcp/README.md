@@ -1,7 +1,8 @@
 <img width="1380" src="https://user-images.githubusercontent.com/11469990/206996661-560a55f0-5dff-4ff1-8dad-db8a91e65292.png">
+
 Similar infraestructure than the one from the [AWS project](https://github.com/awoisoak/devops-sandbox/tree/master/projects/terraform/aws) with some GCP peculiarities,
 In order to configure a Cloud SQL instance with a private IP it is required to have [private services access](https://cloud.google.com/vpc/docs/private-services-access) which allow us to create private connections between our VPC networks and the underlying Google service producer's VPC network
-Setup Infraestructure.
+### Setup Infraestructure.
 
 This project assumes that Terraform was setup with the corresponding GCP account.
 
@@ -24,7 +25,7 @@ terraform destroy -var-file="secrets.tfvars"
 
 
 
-Database Initialization
+### Database Initialization
 
 We can initialize the db with a sql script uploaded via GCP web interface.
 For that we need to create a bucket where the sql script is uploaded
@@ -38,7 +39,7 @@ Since the Photoshop web server is using a db user called 'user', we need to crea
         --instance=database \
         --password=password
 
-Troubleshooting:
+### Troubleshooting
 
 - Cloud SQL comes by default with a root user. To set a default password to it:
 
@@ -46,7 +47,7 @@ Troubleshooting:
         --host=% \
         --instance=database \
         --prompt-for-password
-'root':'%' does not have almost any privileges by default but the users created via gcloud will.
+(*root:%* does not have almost any privileges by default but the users created via gcloud will)
 
 - Confirm DB connection from Compute Engine 
         
@@ -60,5 +61,5 @@ Troubleshooting:
   
         ssh -i $HOME/.ssh/google_compute_engine  awoisoak_devops@COMPUTE_ENGINE_PUBLIC_IP        
 
-Since we manually created a bucket storage to upload the scripts/setup_db.sql file, make sure you delete it to avoid being charged (It won't be deleted by Terraform!)
-https://console.cloud.google.com/storage/browser
+Since we manually created a bucket storage to upload the scripts/setup_db.sql file, make sure you [delete it](https://console.cloud.google.com/storage/browser) to avoid being charged (It won't be deleted by Terraform!)
+
