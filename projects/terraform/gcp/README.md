@@ -1,5 +1,8 @@
+<img width="1380" src="https://user-images.githubusercontent.com/11469990/206996661-560a55f0-5dff-4ff1-8dad-db8a91e65292.png">
+Similar infraestructure than the one from the [AWS project](https://github.com/awoisoak/devops-sandbox/tree/master/projects/terraform/aws) with some GCP peculiarities,
+In order to configure a Cloud SQL instance with a private IP it is required to have [private services access](https://cloud.google.com/vpc/docs/private-services-access) which allow us to create private connections between our VPC networks and the underlying Google service producer's VPC network
+Setup Infraestructure.
 
-Setup Infraestructure
 This project assumes that Terraform was setup with the corresponding GCP account.
 
 
