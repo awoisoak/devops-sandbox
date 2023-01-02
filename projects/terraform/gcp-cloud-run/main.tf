@@ -1,7 +1,8 @@
 locals {
   api_services_list = [
     # "cloudbuild.googleapis.com" #TODO confirm if needed. Maybe no since we are using here the docker registry image, we are not buyilding it
-    "run.googleapis.com",
+    "artifactregistry.googleapis.com",
+    "run.googleapis.com"
   ]
 
 }
@@ -15,6 +16,21 @@ resource "google_project_service" "api_services" {
   disable_dependent_services = true
 }
 
+# Setup Artifact Registry
+resource "google_artifact_registry_repository" "my-repo" {
+  provider = google-beta
+
+  project       = var.project_id
+  location      = var.region
+  repository_id = "my-repository"
+  description   = "Docker repository within Artifact Registry"
+  format        = "DOCKER"
+
+  # Waits for the Artifact Registry to be enabled
+  # The problem of using api_services_list is how to specify now that we want to wait just for "run.googleapis.com"?
+  depends_on = [google_project_service.api_services] # TODO needed?
+}
+
 
 resource "google_cloud_run_service" "service" {
   name     = "photo-shop"
@@ -24,8 +40,9 @@ resource "google_cloud_run_service" "service" {
     spec {
       containers {
         #TODO importing images from Docker Registry is not supported
+        # Use Artifact Registry!
         # https://cloud.google.com/run/docs/deploying#other-registries
-        image = "awoisoak/photo-shop"
+        image = "gcr.io/google-samples/hello-app:1.0"
       }
     }
   }
@@ -36,14 +53,14 @@ resource "google_cloud_run_service" "service" {
     latest_revision = true
   }
 
-  # Waits for the Cloud Run API to be enabled
+  # Depends on the Cloud Run API to be enabled
   # The problem of using api_services_list is how to specify now that we want to wait just for "run.googleapis.com"?
-  depends_on = [google_project_service.api_services]
+  # Depends on the repo to be created inside the Artifact registry
+  depends_on = [google_project_service.api_services, google_artifact_registry_repository.my-repo]
 }
 
 # Two ways of allowing unauthenticated users to invoke the service?
 # (It's a web server so we reuqire public access)
-
 # iam_policy(Authoritative) vs iam_member(Non-authoritative)
 # iam_policy looks complex but much more flexible
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_service_iam
