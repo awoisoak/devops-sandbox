@@ -3,7 +3,8 @@
 # ==================================
 locals {
   api_services_list = [
-    "artifactregistry.googleapis.com",
+    # We enable Artifact Registry manually because if added here it will be disabled in 'tf destroy' and then we can't push the image anymore
+    # "artifactregistry.googleapis.com",
     "run.googleapis.com"
   ]
 
@@ -21,20 +22,18 @@ resource "google_project_service" "api_services" {
 # Artifact Registry
 # ==================================
 
-# Setup Artifact Registry
-resource "google_artifact_registry_repository" "my-repo" {
-  provider = google-beta
+# Commented since we are creating it manually previously (otherwise we can't manually upload the docker image)
+# 
+# resource "google_artifact_registry_repository" "my-repo" {
+#   provider = google-beta
 
-  project       = var.project_id
-  location      = var.region
-  repository_id = "my-repository"
-  description   = "Docker repository within Artifact Registry"
-  format        = "DOCKER"
+#   project       = var.project_id
+#   location      = var.region
+#   repository_id = "my-repository"
+#   description   = "Docker repository within Artifact Registry"
+#   format        = "DOCKER"
 
-  # Waits for the Artifact Registry to be enabled
-  # The problem of using api_services_list is how to specify now that we want to wait just for "run.googleapis.com"?
-  depends_on = [google_project_service.api_services] # TODO needed?
-}
+# }
 
 # ==================================
 # Services
@@ -66,8 +65,7 @@ resource "google_cloud_run_service" "service" {
 
   # Depends on the Cloud Run API to be enabled
   # The problem of using api_services_list is how to specify now that we want to wait just for "run.googleapis.com"?
-  # Depends on the repo to be created inside the Artifact registry
-  depends_on = [google_project_service.api_services, google_artifact_registry_repository.my-repo]
+  depends_on = [google_project_service.api_services]
 }
 
 
