@@ -1,6 +1,8 @@
+# ==================================
+# API Services
+# ==================================
 locals {
   api_services_list = [
-    # "cloudbuild.googleapis.com" #TODO confirm if needed. Maybe no since we are using here the docker registry image, we are not buyilding it
     "artifactregistry.googleapis.com",
     "run.googleapis.com"
   ]
@@ -15,6 +17,9 @@ resource "google_project_service" "api_services" {
 
   disable_dependent_services = true
 }
+# ==================================
+# Artifact Registry
+# ==================================
 
 # Setup Artifact Registry
 resource "google_artifact_registry_repository" "my-repo" {
@@ -31,6 +36,9 @@ resource "google_artifact_registry_repository" "my-repo" {
   depends_on = [google_project_service.api_services] # TODO needed?
 }
 
+# ==================================
+# Services
+# ==================================
 
 resource "google_cloud_run_service" "service" {
   name     = "photo-shop"
@@ -39,10 +47,13 @@ resource "google_cloud_run_service" "service" {
   template {
     spec {
       containers {
-        #TODO importing images from Docker Registry is not supported
-        # Use Artifact Registry!
-        # https://cloud.google.com/run/docs/deploying#other-registries
-        image = "gcr.io/google-samples/hello-app:1.0"
+        image = "us-west1-docker.pkg.dev/cloud-run-photoshop/my-repository/photo-shop"
+
+        # By default Google Cloud Run expects the container to expose the port 8080
+        # In this case we need to specify the port exposed by photo-shop container
+        ports {
+          container_port = 9000
+        }
       }
     }
   }
@@ -59,22 +70,47 @@ resource "google_cloud_run_service" "service" {
   depends_on = [google_project_service.api_services, google_artifact_registry_repository.my-repo]
 }
 
-# Two ways of allowing unauthenticated users to invoke the service?
-# (It's a web server so we reuqire public access)
-# iam_policy(Authoritative) vs iam_member(Non-authoritative)
-# iam_policy looks complex but much more flexible
-# https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_service_iam
 
-# Option iam_member
-resource "google_cloud_run_service_iam_member" "run_all_users" {
-  service  = google_cloud_run_service.service.name
-  project  = google_cloud_run_service.service.project
-  location = google_cloud_run_service.service.location
-  role     = "roles/run.invoker"
-  member   = "allUsers"
+# ==================================
+# IAM
+# ==================================
+
+# Two ways of allowing unauthenticated users to invoke the service (It's a web server so we require public access):
+# - iam_policy(Authoritative) 
+# - iam_member (Non-authoritative)
+#
+# https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_service_iam
+# A) Option IAM Policy
+data "google_iam_policy" "noauth" {
+  binding {
+    role = "roles/run.invoker"
+    members = [
+      "allUsers",
+    ]
+  }
 }
 
-# Output the service URL
+resource "google_cloud_run_service_iam_policy" "noauth" {
+  location = google_cloud_run_service.service.location
+  project  = google_cloud_run_service.service.project
+  service  = google_cloud_run_service.service.name
+
+  policy_data = data.google_iam_policy.noauth.policy_data
+}
+# B) Option IAM Member
+# resource "google_cloud_run_service_iam_member" "run_all_users" {
+#   service  = google_cloud_run_service.service.name
+#   project  = google_cloud_run_service.service.project
+#   location = google_cloud_run_service.service.location
+#   role     = "roles/run.invoker"
+#   member   = "allUsers"
+# }
+
+
+# ==================================
+# Outputs
+# ==================================
+
 output "service_url" {
   value = google_cloud_run_service.service.status[0].url
 
