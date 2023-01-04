@@ -5,7 +5,8 @@ locals {
   api_services_list = [
     # We enable Artifact Registry manually because if added here it will be disabled in 'tf destroy' and then we can't push the image anymore
     # "artifactregistry.googleapis.com",
-    "run.googleapis.com"
+    "run.googleapis.com",    // Clode Run
+    "storage.googleapis.com" // Buckets
   ]
 
 }
@@ -103,7 +104,6 @@ resource "google_cloud_run_service_iam_policy" "noauth" {
 #   role     = "roles/run.invoker"
 #   member   = "allUsers"
 # }
-
 
 # ==================================
 # Outputs

@@ -1,4 +1,8 @@
 terraform {
+  # GCS supports by default state locking https://developer.hashicorp.com/terraform/language/settings/backends/gcs
+  backend "gcs" {
+    bucket = "tf-state-cloud-run-photoshop"
+  }
   required_providers {
     google = {
       source  = "hashicorp/google"
