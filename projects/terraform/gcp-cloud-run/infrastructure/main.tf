@@ -3,10 +3,7 @@
 # ==================================
 locals {
   api_services_list = [
-    # We enable Artifact Registry manually because if added here it will be disabled in 'tf destroy' and then we can't push the image anymore
-    # "artifactregistry.googleapis.com",
-    "run.googleapis.com",    // Clode Run
-    "storage.googleapis.com" // Buckets
+    "run.googleapis.com", // Clode Run
   ]
 
 }
@@ -19,27 +16,10 @@ resource "google_project_service" "api_services" {
 
   disable_dependent_services = true
 }
-# ==================================
-# Artifact Registry
-# ==================================
-
-# Commented since we are creating it manually previously (otherwise we can't manually upload the docker image)
-# 
-# resource "google_artifact_registry_repository" "my-repo" {
-#   provider = google-beta
-
-#   project       = var.project_id
-#   location      = var.region
-#   repository_id = "my-repository"
-#   description   = "Docker repository within Artifact Registry"
-#   format        = "DOCKER"
-
-# }
 
 # ==================================
 # Services
 # ==================================
-
 resource "google_cloud_run_service" "service" {
   name     = "photo-shop"
   location = var.region
