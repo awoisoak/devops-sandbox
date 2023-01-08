@@ -2,11 +2,11 @@ There are two Terraform projects
 - 'infrastructure'
 - 'pre-infrastructure'
 
-The infrastructure tf project defines a Cloud Run service with a prepopulated image of photo-shop web server within the Artifact Registry.
+The infrastructure tf project defines a [Cloud Run](https://cloud.google.com/run/) service with a prepopulated image of photo-shop web server within the Artifact Registry.
 When the 'infrastructure' projects is setup the Artifact Registry must be already created and must contain the required Docker image. Because of that it is not created within this Terraform project.
 
 The 'pre-infrastructure' Terraform project is in charge of two main tasks:
-- Setting up the Artifact Registry where the photo-shop Docker image used by 'infraestructre' will be uploaded.
+- Setting up the [Artifact Registry](https://cloud.google.com/artifact-registry/) where the photo-shop Docker image used by 'infraestructre' will be uploaded.
   
 - Create the Bucket where 'infrastructure' will push its state files.
 
