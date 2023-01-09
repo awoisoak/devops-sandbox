@@ -2,7 +2,7 @@
 *__pycache__*
 *.pem
 
-*.terraform*
+*.terraform/*
 *terraform.tfstate*
 
 *.backup
