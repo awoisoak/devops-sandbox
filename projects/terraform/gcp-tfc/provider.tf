@@ -1,4 +1,12 @@
 terraform {
+  cloud {
+    hostname     = "app.terraform.io"
+    organization = "awoisoak-devops"
+    workspaces {
+      name = "gcp-tfc"
+    }
+  }
+
   required_providers {
     google = {
       source  = "hashicorp/google"
