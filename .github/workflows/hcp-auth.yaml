@@ -1,0 +1,26 @@
+name: HCP auth
+
+on:
+  push:
+    branches:
+      - hcp_auth
+
+jobs:
+  hcp-auth:
+    runs-on: ubuntu-latest
+    # "id-token" is needed when using Workload Identity Federation.
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+      - uses: 'hashicorp/hcp-auth-action@v0'
+        with:
+          workload_identity_provider: 'iam/project/f60d48fd-976e-4c55-994b-3987908239a6/service-principal/my-sp/workload-identity-provider/github'
+
+      - uses: 'hashicorp/hcp-setup-action@v0'
+        with:
+          version: 'latest'
+
+      - name: 'Trigger hcp commands'
+        run: |
+          hcp auth print-access-token
